@@ -1,3 +1,5 @@
+require 'memoryleak'
+
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
@@ -39,7 +41,7 @@ class ApplicationController < ActionController::Base
 
 
   def load_repository_list
-    @repositories = JSONModel(:repository).all
+    @repositories = MemoryLeak::Repositories.get
 
     if not session.has_key?(:repo) and not @repositories.empty?
       session[:repo] = @repositories.first.repo_code.to_s
