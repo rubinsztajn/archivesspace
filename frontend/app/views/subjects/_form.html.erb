@@ -1,6 +1,134 @@
 <%= render "shared/form_messages", :object => @subject %>
 <fieldset>
    <%= f.hidden_field :vocabulary, :value => session[:vocabulary]['uri'] %>
-   <%= f.label_field_pair :term %>
-   <%= f.label_field_pair :term_type %>
+   <div class="row-fluid">
+      <div class="span5">Term</div>
+      <div class="span5">Type</div>
+      <div class="span1"></div>
+   </div>
+   <div class="subjects-container"></div>
+   <hr/>
+   <div class="row-fluid">
+      <div class="span12">
+         <h4>Preview</h4>
+         <div class="preview-container"></div>
+      </div>
+   </div>
 </fieldset>
+
+<div id="subjects_termandtypeform_template"><!--
+   <div class="row-fluid">
+      <div class="span5">
+         <%= f.jsonmodel_field :term %>
+      </div>
+      <div class="span5">
+         <%= f.jsonmodel_field :term_type %>
+      </div>
+      <div class="span1">
+         <button type="button" class="btn btn-mini add-subjects-row">Add</button>
+      </div>
+   </div>
+--></div>
+
+<div id="subjects_preview_template"><!--
+   <br/>
+   <p class="preview">
+      {for term in terms}
+         <span title="${term.type}">${term.term}</span> {if term_index < terms.length-1} <span>--</span>{/if}
+      {/for}
+   </p>
+--></div>
+
+
+<script>
+$(function() {
+   var term_types = [
+       "Cultural context",
+       "Function",
+       "Geographic",
+       "Genre / form",
+       "Occupation",
+       "Style / period",
+       "Technique",
+       "Temporal",
+       "Topical",
+       "Uniform title"
+   ];
+
+
+   var existing_subjects = [
+       {
+           uri: "/subjects/1",
+           terms: [{term: "Cookery", type: "Topical"},
+                   {term: "English", type: "Geographic"},
+                   {term: "17th Century", type: "Temporal"}]
+       },
+       {
+           uri: "/subjects/2",
+           terms: [{term: "Kung Fu", type: "Topical"},
+                   {term: "China", type: "Geographic"},
+                   {term: "Biography", type: "Genre / form"}]
+       },
+       {
+           uri: "/subjects/3",
+           terms: [{term: "Sea anemones", type: "Topical"},
+                   {term: "Western Australia", type: "Geographic"}]
+       },
+       {
+           uri: "/subjects/4",
+           terms: [{term: "Sea anemones", type: "Topical"},
+                   {term: "Queensland", type: "Geographic"},
+                   {term: "Western Australia", type: "Geographic"}]
+       }
+   ];
+
+
+   var terms = [
+       {term: "Cookery", type: "Topical"},
+       {term: "English", type: "Geographic"},
+       {term: "17th Century", type: "Temporal"},
+       {term: "Kung Fu", type: "Topical"},
+       {term: "China", type: "Geographic"},
+       {term: "Biography", type: "Genre / form"},
+       {term: "Western Australia", type: "Geographic"},
+       {term: "Sea anemones", type: "Topical"},
+       {term: "Queensland", type: "Geographic"},
+       {term: "Western Australia", type: "Geographic"}
+   ];
+
+   
+   var renderTermEntry = function() {
+      $(".add-subjects-row").remove();
+      var row = $(AS.renderTemplate("subjects_termandtypeform_template"));
+      $('#subject_term', row).typeahead({
+         source: terms.map(function(t) {return t.term + " [" + t.type + "]"})
+      }).change(function() {
+         var val = $(this).val();
+         var indexOfType = val.indexOf("[");
+         if (indexOfType>0) {
+            $(this).val(val.substring(0, indexOfType-1));
+            $(this).parents(".row-fluid:first").find("#subject_term_type").val(val.substring(indexOfType+1,val.length - 1));
+         }
+         renderPreview();
+      }).keyup(renderPreview);
+      $('#subject_term_type', row).change(renderPreview);
+      $(".subjects-container").append(row);
+      $(':input[name="subject[term]"]:last').focus();
+   }
+   
+   $(".subjects-container").on("click", ".add-subjects-row", renderTermEntry);
+   
+   var renderPreview = function() {
+      var terms = [];
+      $(':input[name="subject[term]"]').each(function() {
+         terms.push({
+            term: $(this).val(),
+            type: $(this).parents(".row-fluid:first").find("#subject_term_type").val()
+         });
+      });
+      $(".preview-container").html(AS.renderTemplate("subjects_preview_template", {terms:terms}));
+   }
+   
+   renderTermEntry();
+});
+</script>
