@@ -83,7 +83,7 @@ class ASpaceImporter
   # If the import user does nothing, the repository will be the most recently opened repository, or else the repository set when the importer was initialized 
 
   def get_import_opts
-    opts = { }
+    opts = { :vocab_id => 1 }
     if @current[:repository]
       opts.merge!( { :repo_id => @current[:repository].last } )
     elsif @repo_key
