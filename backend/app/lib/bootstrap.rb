@@ -3,6 +3,7 @@ require 'sequel'
 
 require_relative 'exceptions'
 require_relative 'logging'
+require_relative 'webhooks'
 require_relative File.join("..", "..", "config", "config-distribution")
 
 if File.file?(File.join("config", "config.rb"))

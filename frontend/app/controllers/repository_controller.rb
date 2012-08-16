@@ -9,7 +9,7 @@ class RepositoryController < ApplicationController
     begin
       @repository = JSONModel(:repository).from_hash(params['repository'])
       @repository.save
-      MemoryLeak::Repositories.refresh
+      MemoryLeak::Resources.refresh(:repository)
       render :text=>"Success"
     rescue JSONModel::ValidationException => e
       @repository = e.invalid_object

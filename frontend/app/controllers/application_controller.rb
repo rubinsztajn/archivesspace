@@ -41,7 +41,7 @@ class ApplicationController < ActionController::Base
 
 
   def load_repository_list
-    @repositories = MemoryLeak::Repositories.get
+    @repositories = MemoryLeak::Resources.get(:repository)
 
     if not session.has_key?(:repo) and not @repositories.empty?
       session[:repo] = @repositories.first.repo_code.to_s
@@ -59,7 +59,7 @@ class ApplicationController < ActionController::Base
 
   def load_default_vocabulary
      if not session.has_key?(:vocabulary)
-        session[:vocabulary] = JSONModel(:vocabulary).all.first.to_hash
+       session[:vocabulary] = MemoryLeak::Resources.get(:vocabulary).first.to_hash
      end
   end
 

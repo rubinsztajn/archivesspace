@@ -21,6 +21,15 @@ module JSONModel
   end
 
 
+  def self.backend_url
+    if Module.const_defined?(:BACKEND_SERVICE_URL)
+      BACKEND_SERVICE_URL
+    else
+      init_args[:url]
+    end
+  end
+
+
   @@error_handlers = []
 
   def self.add_error_handler(&block)
@@ -32,6 +41,34 @@ module JSONModel
       handler.call(err)
     end
   end
+
+
+  @@notification_handlers = []
+
+  def self.add_notification_handler(code = nil, &block)
+    @@notification_handlers << {:code => code, :block => block}
+  end
+
+  def self.notify(msg)
+    @@notification_handlers.each do |handler|
+      if handler[:code].nil? or handler[:code] == msg["code"]
+        handler[:block].call(msg)
+      end
+    end
+  end
+
+
+  def self.webhook_register(endpoint)
+    url = URI(backend_url)
+
+    req = Net::HTTP::Post.new("/webhooks/register")
+    req.form_data = {"url" => endpoint}
+
+    Net::HTTP.start(url.host, url.port) do |http|
+      http.request(req)
+    end
+  end
+
 
   @@protected_fields << "uri"
 
@@ -92,13 +129,7 @@ module JSONModel
       # URL of the backend)
       def my_url(id = nil, opts = {})
 
-        if Module.const_defined?(:BACKEND_SERVICE_URL)
-          backend = BACKEND_SERVICE_URL
-        else
-          backend = JSONModel::init_args[:url]
-        end
-
-        url = URI("#{backend}#{self.uri_for(id, opts)}")
+        url = URI("#{JSONModel::backend_url}#{self.uri_for(id, opts)}")
 
         # Don't need to pass this as a URL parameter if it wasn't picked up by
         # the URI template substitution.

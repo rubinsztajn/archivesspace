@@ -2,21 +2,25 @@ require 'atomic'
 
 module MemoryLeak
 
-  class Repositories
+  class Resources
 
-    @@repositories = Atomic.new(nil)
+    @@resources = {
+      :repository => Atomic.new(nil),
+      :vocabulary => Atomic.new(nil)
+    }
 
-    def self.get
-      if @@repositories.value.nil?
-        self.refresh
+
+    def self.get(resource)
+      if @@resources[resource].value.nil?
+        self.refresh(resource)
       end
 
-      @@repositories.value
+      @@resources[resource].value
     end
 
 
-    def self.refresh
-      @@repositories.swap(JSONModel(:repository).all)
+    def self.refresh(resource)
+      @@resources[resource].swap(JSONModel(resource).all)
     end
 
   end

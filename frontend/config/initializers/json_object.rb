@@ -9,5 +9,19 @@ JSONModel::add_error_handler do |error|
   end
 end
 
+
+JSONModel::add_notification_handler("REPOSITORY_CHANGED") do |msg|
+  MemoryLeak::Resources.refresh(:repository)
+end
+
+
+JSONModel::add_notification_handler("VOCABULARY_CHANGED") do |msg|
+  MemoryLeak::Resources.refresh(:vocabulary)
+end
+
+
+puts "Registering with backend"
+JSONModel::webhook_register("http://localhost:3000/webhook/notify")
+
 include JSONModel
 
