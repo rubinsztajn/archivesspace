@@ -22,6 +22,12 @@ Sequel.migration do
     end
 
 
+    create_table(:webhook_endpoints) do
+      primary_key :id
+      String :url, :unique => true, :null => false
+    end
+
+
     create_table(:users) do
       primary_key :id
 
@@ -183,6 +189,8 @@ Sequel.migration do
   down do
     drop_table?(:sessions)
     drop_table?(:auth_db)
+
+    drop_table?(:webhook_endpoints)
 
     drop_table?(:groups_users)
     drop_table?(:users)

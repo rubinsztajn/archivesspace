@@ -6,61 +6,44 @@ require 'set'
 class Webhooks
 
   @@mutex = Mutex.new
-  @@listeners = Set.new
-
-  puts "Starting worker pool"
-  @@workers = java.util.concurrent.Executors.newFixedThreadPool(10)
-
 
   def self.add_listener(url)
-    @@mutex.synchronize do
-      @@listeners << url
+    DB.open do |db|
+      begin
+        db[:webhook_endpoints].insert(:url => url)
+      rescue
+      end
     end
   end
 
 
   def self.notify(code, params = {})
 
-    @@listeners.each do |url|
+    listeners = DB.open do |db|
+      db[:webhook_endpoints].select(:url).map {|row| row[:url] }
+    end
 
-      job = Class.new do
+    listeners.each do |url|
+      Thread.new do
+        begin
+          uri = URI(url)
+          http = Net::HTTP.new(uri.host, uri.port)
 
-        def self.setup(url, code, params)
-          @url = url
-          @code = code
-          @params = params
-        end
+          http.open_timeout = 2
+          http.read_timeout = 2
 
-        def self.run
-          begin
-            uri = URI(@url)
-            http = Net::HTTP.new(uri.host, uri.port)
+          req = Net::HTTP::Post.new(uri.request_uri)
+          req.form_data = {"code" => code}.merge(params)
 
-            http.open_timeout = 2
-            http.read_timeout = 2
-
-            req = Net::HTTP::Post.new(uri.request_uri)
-            req.form_data = {"code" => @code}.merge(@params)
-
-            http.start do |http|
-              http.request(req) do |response|
-              end
+          http.start do |http|
+            http.request(req) do |response|
             end
-          rescue
-            # Oh well!
           end
+        rescue
+          # Oh well!
         end
       end
-
-      job.setup(url, code, params)
-      @@workers.execute(job)
-
     end
-  end
-
-
-  def self.shutdown
-    @@workers.shutdown
   end
 
 end
