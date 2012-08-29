@@ -1,4 +1,4 @@
-if ENV['COVERAGE_REPORTS']
+if ENV['COVERAGE_REPORTS'] == 'true'
   require 'tmpdir'
   require 'pp'
   require 'simplecov'

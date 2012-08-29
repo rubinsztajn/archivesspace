@@ -35,6 +35,8 @@ ArchivesSpace::Application.routes.draw do
   resources :subjects
   match 'subjects/:id' => 'subjects#update', :via => [:post]
 
+  match 'test/shutdown' => 'tests#shutdown', :via => [:get]
+
   # Sample resource route with options:
   #   resources :products do
   #     member do

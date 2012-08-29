@@ -154,8 +154,17 @@ describe "ArchivesSpace user interface" do
   after(:all) do
     @driver.quit
 
+    if ENV["COVERAGE_REPORTS"] == 'true'
+      begin
+        TestUtils::get(URI("#{$frontend}/test/shutdown"))
+      rescue
+        # Expected to throw an error here, but that's fine.
+      end
+    else
+      TestUtils::kill(@frontend) if @frontend
+    end
+
     TestUtils::kill(@backend) if @backend
-    TestUtils::kill(@frontend) if @frontend
   end
 
 
@@ -172,10 +181,42 @@ describe "ArchivesSpace user interface" do
   end
 
 
-  it "Successfully creates a user" do
+  it "Flags errors when registering user without username or name" do
     @driver.find_element(:link, "Sign In").click
     @driver.find_element(:link, "Register now").click
 
+    @driver.find_element(:id, 'create_account').click
+
+    @driver.find_element(:css => ".errors-for-username .error").text.should eq('Username - Property is required but was missing')
+    @driver.find_element(:css => ".errors-for-name .error").text.should eq('Your full name - Property is required but was missing')
+  end
+
+
+  it "Flags errors when registering user without password" do
+    @driver.find_element(:id, "createuser_username").clear_and_send_keys @user
+    @driver.find_element(:id, "createuser_name").clear_and_send_keys @user
+
+    @driver.find_element(:id, 'create_account').click
+
+    @driver.find_element(:css => ".errors-for-password .error").text.should eq('Password - Can\'t be empty')
+    @driver.find_element(:css => ".errors-for-confirm_password .error").text.should eq('Confirm your password - Can\'t be empty')
+  end
+
+
+  it "Flags errors when registering user when password doesn't match confirm password" do
+    @driver.find_element(:id, "createuser_username").clear_and_send_keys @user
+    @driver.find_element(:id, "createuser_name").clear_and_send_keys @user
+
+    @driver.find_element(:id, "createuser_password").clear_and_send_keys "testuser"
+    @driver.find_element(:id, "createuser_confirm_password").clear_and_send_keys "oopsie"
+
+    @driver.find_element(:id, 'create_account').click
+
+    @driver.find_element(:css => ".errors-for-passwords .error").text.should eq('Passwords - entered values didn\'t match')
+  end
+
+
+  it "Successfully creates a user" do
     @driver.find_element(:id, "createuser_username").clear_and_send_keys @user
     @driver.find_element(:id, "createuser_name").clear_and_send_keys @user
     @driver.find_element(:id, "createuser_password").clear_and_send_keys "testuser"
@@ -189,6 +230,23 @@ describe "ArchivesSpace user interface" do
 
   it "Can log out" do
     logout(@driver)
+  end
+
+
+  it "Flags errors when registering a user with same username" do
+    @driver.find_element(:link, "Sign In").click
+    @driver.find_element(:link, "Register now").click
+
+    @driver.find_element(:id, "createuser_username").clear_and_send_keys @user
+    @driver.find_element(:id, "createuser_name").clear_and_send_keys @user
+    @driver.find_element(:id, "createuser_password").clear_and_send_keys "testuser"
+    @driver.find_element(:id, "createuser_confirm_password").clear_and_send_keys "testuser"
+
+    @driver.find_element(:id, 'create_account').click
+
+    @driver.find_element(:css => ".errors-for-username .error").text.should match(/Username - Username '#{@user}' is already in use/)
+
+    @driver.find_element(:css, '.btn-cancel').click
   end
 
 
@@ -223,6 +281,19 @@ describe "ArchivesSpace user interface" do
     @driver.find_element(:id => "repository_repo_code").clear_and_send_keys test_repo_code_1
     @driver.find_element(:id => "repository_description").clear_and_send_keys test_repo_name_1
     @driver.find_element(:css => "form#new_repository input[type='submit']").click
+  end
+
+
+  it "Flags errors when creating a repository with same name" do
+    @driver.find_element(:css, '.repository-container .btn').click
+    @driver.find_element(:link, "Create a Repository").click
+    @driver.find_element(:id => "repository_repo_code").clear_and_send_keys test_repo_code_1
+    @driver.find_element(:id => "repository_description").clear_and_send_keys test_repo_name_2
+    @driver.find_element(:css => "form#new_repository input[type='submit']").click
+
+    @driver.find_element(:css => ".errors-for-repo_code .error").text.should eq("Repository code - repo_code already in use")
+
+    @driver.find_element(:css => "form#new_repository .btn-cancel").click
   end
 
 
@@ -339,7 +410,7 @@ describe "ArchivesSpace user interface" do
     @driver.find_element(:id, "archival_object_ref_id").clear_and_send_keys(Digest::MD5.hexdigest("#{Time.now}"))
     @driver.click_and_wait_until_gone(:id => "createPlusOne")
 
-    ["January", "February", "December"]. each do |month|
+    ["January", "February", "November"]. each do |month|
 
       @driver.find_element(:id, "archival_object_title").clear_and_send_keys(month)
       @driver.find_element(:id, "archival_object_ref_id").clear_and_send_keys(Digest::MD5.hexdigest("#{month}#{Time.now}"))
@@ -352,10 +423,19 @@ describe "ArchivesSpace user interface" do
 
   it "Can cancel edits to archival object records" do
     @driver.find_element(:id, "archival_object_title").clear_and_send_keys("unimportant change")
-    @driver.find_element(:css, "a[title='December']").click
+    @driver.find_element(:css, "a[title='November']").click
     @driver.find_element(:id, "dismissChangesButton").click
 
     # Last added node now selected
+    @driver.find_element(:css => "a.jstree-clicked").text.strip.should eq('November')
+  end
+
+
+  it "Can update a node's title" do
+    @driver.find_element(:id, "archival_object_title").clear_and_send_keys("December")
+    @driver.find_element(:css, "button.btn-primary").click
+
+    @driver.find_element(:id, "archival_object_title").attribute("value").should eq('December')
     @driver.find_element(:css => "a.jstree-clicked").text.strip.should eq('December')
   end
 

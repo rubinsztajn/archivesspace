@@ -10,10 +10,15 @@ module TestUtils
   end
 
 
+  def self.get(url)
+    Net::HTTP.get_response(url)
+  end
+
+
   def self.wait_for_url(url)
     while true
       begin
-        response = Net::HTTP.get_response(url)
+        response = get(url)
 
         if response.is_a?(Net::HTTPSuccess)
           break
