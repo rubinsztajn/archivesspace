@@ -228,7 +228,10 @@ describe 'JSON model' do
                                             "elt_1" => "thisisatest"
                                           })
     ts[:shorty] = "meep"
+    real_stdout = $stdout
+    $stdout = StringIO.new
     ts._exceptions[:errors].keys.should eq ([:unknown])
+    $stdout = real_stdout
 
   end
 
