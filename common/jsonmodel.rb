@@ -505,8 +505,7 @@ module JSONModel
             errors[$1] = ["Must be a #{$3} (you provided a #{$2})"]
 
           else
-            puts "Failed to find a matching parse rule for: #{message}"
-            errors[:unknown] = ["Failed to find a matching parse rule for: #{message}"]
+            errors[:unknown] = [message]
           end
 
         end
