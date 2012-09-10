@@ -1,107 +1,162 @@
-require_relative "../jsonmodel"
-require 'net/http'
-require 'json'
+require_relative "spec_helper.rb"
 
-describe JSONModel do
+describe 'JSON model' do
 
   before(:all) do
 
-    BACKEND_SERVICE_URL = 'http://example.com'
+    JSONModel.create_model_for("testschema",
+                               {
+                                 "type" => "object",
+                                 "uri" => "/repositories/:repo_id/tests",
+                                 "properties" => {
+                                   "uri" => {"type" => "string", "required" => false},
+                                   "elt_0" => {"type" => "string", "required" => true, "minLength" => 1, "pattern" => "^[a-zA-Z0-9 ]*$"},
+                                   "elt_1" => {"type" => "string", "required" => false, "default" => "", "pattern" => "^[a-zA-Z0-9]*$"},
+                                   "elt_2" => {"type" => "string", "required" => false, "default" => "", "pattern" => "^[a-zA-Z0-9]*$"},
+                                   "elt_3" => {"type" => "string", "required" => false, "default" => "", "pattern" => "^[a-zA-Z0-9]*$"},
+                                 },
+    
+                                 "additionalProperties" => false
+                               })
 
-    class StubHTTP
-      def request (req)
-        StubResponse.new
-      end
-      def code
-        "200"
-      end
-      def body
-        { 'id' => '999' }.to_json
-      end
-    end
 
-    class Klass
-      include JSONModel
-    end
   end
+  
   before(:each) do
-
-    schema = '{
-      :schema => {
-        "$schema" => "http://www.archivesspace.org/archivesspace.json",
-        "type" => "object",
-        "uri" => "/repositories/:repo_id/stubs",
-        "properties" => {
-          "uri" => {"type" => "string", "required" => false},
-          "ref_id" => {"type" => "string", "ifmissing" => "error", "minLength" => 1, "pattern" => "^[a-zA-Z0-9]*$"},
-          "component_id" => {"type" => "string", "required" => false, "default" => "", "pattern" => "^[a-zA-Z0-9]*$"},
-          "title" => {"type" => "string", "minLength" => 1, "required" => true},
-
-          "level" => {"type" => "string", "minLength" => 1, "required" => false},
-          "parent" => {"type" => "JSONModel(:stub) uri", "required" => false},
-          "collection" => {"type" => "JSONModel(:stub) uri", "required" => false},
-
-          "subjects" => {"type" => "array", "items" => {"type" => "JSONModel(:stub) uri_or_object"}},
-        },
-
-        "additionalProperties" => false,
-      },
-    }'
-
-
-
-    # File.stub(:dirname){ 'stub' }
-    # File.stub(:join){ 'stub' }
-    # File.stub(:join).with("schemas", "*.rb") { 'stub' }
-    Dir.stub(:glob){ ['stub'] }
-    File.stub(:basename){ 'stub' }
-    File.stub_chain("open.read") { schema }
-    # File.stub(:open).with('stub'){'stub'}
-
-
-    Net::HTTP.stub(:start){ StubHTTP.new }
-
-    JSONModel::init( { :client_mode => true, :url => "http://example.com", :strict_mode => true } )
-
-    @klass = Klass.new
+    make_test_repo
   end
 
-  it "should supply a class for a loaded schema" do
-
-    @klass.JSONModel(:stub).to_s.should eq('JSONModel(:stub)')
-
+  after(:all) do
+    JSONModel.destroy_model(:testschema)
   end
 
-  it "should create an instance when given a hash" do
-
-    jo = @klass.JSONModel(:stub).from_hash({"ref_id" => "abc", "title"=> "Stub Object"})
-    jo.ref_id.should eq("abc")
-
+  it "Accepts a simple record" do
+    JSONModel(:testschema).from_hash({
+                                       "elt_0" => "helloworld",
+                                       "elt_1" => "thisisatest"
+                                     })
+  end
+  
+  it "Accepts a simple record with symbols as keys" do
+    JSONModel(:testschema).from_hash({
+                                       :elt_0 => "helloworld",
+                                       :elt_1 => "thisisatest"
+                                     })
   end
 
-  it "should be able to determine the uri for a class instance give an id and a repo_id" do
 
-    @klass.JSONModel(:stub).uri_for(500, :repo_id => "1").should eq('/repositories/1/stubs/500')
-
+  it "Flags errors on invalid values" do
+    lambda {
+      JSONModel(:testschema).from_hash({"elt_0" => "/!$"})
+    }.should raise_error(ValidationException)
   end
 
-  it "should be able to save an instance of a model" do
-    jo = @klass.JSONModel(:stub).from_hash({:ref_id => "abc", :title=> "Stub Object"})
-    jo.save()
-    jo.to_hash.has_key?('uri').should be_true
+
+  it "Provides accessors for non-schema properties but doesn't serialise them" do
+    obj = JSONModel(:testschema).from_hash({
+                                             "elt_0" => "helloworld",
+                                             "special" => "some string"
+                                           })
+
+    obj.elt_0.should eq ("helloworld")
+    obj.special.should eq ("some string")
+
+    obj.to_hash.has_key?("special").should be_false
+    JSON[obj.to_json].has_key?("special").should be_false
   end
 
-  it "should create an instance when given a hash using symbols for keys" do
 
-    jo = @klass.JSONModel(:stub).from_hash({:ref_id => "abc", :title=> "Stub Object"})
-    jo.ref_id.should eq("abc")
+  it "Allows for updates" do
+    obj = JSONModel(:testschema).from_hash({
+                                             "elt_0" => "helloworld",
+                                           })
 
+    obj.elt_0 = "a new string"
+
+    JSON[obj.to_json]["elt_0"].should eq("a new string")
   end
 
-  it "should have its repo id in its uri after being saved" do
-    jo = @klass.JSONModel(:stub).from_hash({:ref_id => "abc", :title=> "Stub Object"})
-    jo.save("repo_id" => 2)
-    jo.uri.should eq('/repositories/2/stubs/999')
+
+  it "Throws an exception with some useful accessors" do
+    exception = false
+    begin
+      JSONModel(:testschema).from_hash({"elt_0" => "/!$"})
+    rescue ValidationException => e
+      exception = e
+    end
+
+    exception.should_not be_false
+
+    # You can still get at your invalid object if you really want.
+    exception.invalid_object.elt_0.should eq("/!$")
+
+    # And you can get a list of its problems too
+    exception.errors["elt_0"][0].should eq "Did not match regular expression: ^[a-zA-Z0-9 ]*$"
   end
 
+
+  it "Warns on missing properties instead of erroring" do
+    JSONModel::strict_mode(false)
+    model = JSONModel(:testschema).from_hash({})
+
+    model._warnings.keys.should eq(["elt_0"])
+    JSONModel::strict_mode(true)
+  end
+
+
+  it "Supports the 'ifmissing' definition" do
+    JSONModel.create_model_for("strictschema",
+                               {
+                                 "type" => "object",
+                                 "properties" => {
+                                   "container" => {
+                                     "type" => "object",
+                                     "required" => true,
+                                     "properties" => {
+                                       "strict" => {"type" => "string", "ifmissing" => "error"},
+                                     }
+                                   }
+                                 },
+                               })
+
+    JSONModel::strict_mode(false)
+
+    model = JSONModel(:strictschema).from_hash({:container => {}}, false)
+
+    model._exceptions[:errors].keys.should eq(["strict"])
+    JSONModel::strict_mode(true)
+    JSONModel.destroy_model(:strictschema)
+  end
+  
+  it "Determines the uri for a hypothetical instance given an id and a repo_id" do  
+      JSONModel(:testschema).uri_for(500, :repo_id => "1").should match(/repositories\/1\/tests\/[0-9]*/)
+  end
+  
+  it "Will save an instance of a model supported by the backend" do
+    resource = JSONModel(:resource).from_hash(:title => "a resource", :id_0 => "abc123")
+    resource.save.to_s.should match(/[0-9]*/)
+  end
+  
+  it "Will set the URI for an instance on save" do
+    resource = JSONModel(:resource).from_hash(:title => "a resource", :id_0 => "abc123")
+    resource.uri.should be_nil
+    resource.save
+    resource.uri.should match(/\/repositories\/[0-9]*\/resources\/[0-9]*/)
+  end
+  
+  it "Returns the backend url" do
+    JSONModel(:testschema).backend_url.should eq('http://example.com')
+  end
+  
+  it "Finds an instance of a model given an id" do
+    id = JSONModel(:resource).from_hash(:title => "a resource", :id_0 => "abc123").save
+    JSONModel(:resource).find(id).id_0.should eq("abc123")
+  end
+
+  it "Finds all instances of a model" do
+    JSONModel(:resource).from_hash(:title => "resource 0", :id_0 => "abc123").save
+    JSONModel(:resource).from_hash(:title => "resource 1", :id_0 => "def345").save
+    JSONModel(:resource).all.count.should eq(2)
+  end  
 end
+

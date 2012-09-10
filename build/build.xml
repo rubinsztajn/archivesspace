@@ -250,5 +250,16 @@
     </java>
   </target>
 
+  <target name="common:coverage" depends="bootstrap:coverage" description="Generate coverage reports for the backend">
+    <java classpath="${coverage.jruby_file}" classname="org.jruby.Main" fork="true" 
+          failonerror="true"
+          dir="../common">
+      <env key="GEM_HOME" value="${gem_home}" />
+      <env key="GEM_PATH" value="" />
+      <env key="COVERAGE_REPORTS" value="true" />
+      <arg line="--1.9 --debug ../build/gems/bin/rspec -P '*_spec.rb' --order rand:1 spec" />
+    </java>
+  </target>
+
 
 </project>

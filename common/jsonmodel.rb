@@ -284,17 +284,20 @@ module JSONModel
       #  might yield 500
       #
       def self.id_for(uri, opts = {}, noerror = false)
-        pattern = self.schema['uri'];
-        pattern = pattern.gsub(/\/:[a-zA-Z_]+\//, '/[^/ ]+/')
+        if (pattern = self.schema['uri'])
+          pattern = pattern.gsub(/\/:[a-zA-Z_]+\//, '/[^/ ]+/')
 
-        if uri =~ /#{pattern}\/([0-9]+)$/
-          return $1.to_i
-        else
-          if noerror
-            nil
+          if uri =~ /#{pattern}\/([0-9]+)$/
+            return $1.to_i
           else
-            raise "Couldn't make an ID out of URI: #{uri}"
+            if noerror
+              nil
+            else
+              raise "Couldn't make an ID out of URI: #{uri}"
+            end
           end
+        else
+          raise "Tried to make an ID using a schema without a uri definition"
         end
       end
 
