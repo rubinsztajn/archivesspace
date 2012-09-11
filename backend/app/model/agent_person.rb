@@ -12,12 +12,12 @@ class AgentPerson < Sequel::Model(:agent_person)
   link_association_to_jsonmodel(:association => :name_person,
                                 :jsonmodel => :name_person,
                                 :json_property => :names,
-                                :always_inline => true)
+                                :always_resolve => true)
 
   link_association_to_jsonmodel(:association => :agent_contacts,
                                 :jsonmodel => :agent_contact,
                                 :json_property => :agent_contacts,
-                                :always_inline => true)
+                                :always_resolve => true)
 
   def self.sequel_to_jsonmodel(obj, type)
     json = super(obj, type)

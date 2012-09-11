@@ -68,7 +68,7 @@ module ASModel
     #   link_association_to_jsonmodel(:association => :terms,
     #                                 :jsonmodel => :term,
     #                                 :json_property => :terms,
-    #                                 :always_inline => true)
+    #                                 :always_resolve => true)
     #
     # Causes an incoming JSONModel(:subject) to have each of the objects in its
     # "terms" array to be coerced into a Sequel model (based on the :terms
@@ -78,7 +78,7 @@ module ASModel
     #
     # The definition also causes Subject.to_jsonmodel(obj, :subject) to
     # automatically pull back the list of terms associated with the object and
-    # include them in the response.  Here, the :always_inline parameter
+    # include them in the response.  Here, the :always_resolve parameter
     # indicates that we want the actual JSON objects to be included in the
     # response, not just their URI references.
 
@@ -184,7 +184,7 @@ module ASModel
         model = Kernel.const_get(linked_record[:association][:class_name])
 
         records = obj.send(linked_record[:association][:name]).map {|linked_obj|
-          if linked_record[:always_inline]
+          if linked_record[:always_resolve]
             model.to_jsonmodel(linked_obj, linked_record[:jsonmodel]).to_hash
           else
             JSONModel(linked_record[:jsonmodel]).uri_for(linked_obj.id) or

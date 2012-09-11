@@ -10,7 +10,7 @@ class Subject < Sequel::Model(:subjects)
   link_association_to_jsonmodel(:association => :terms,
                                 :jsonmodel => :term,
                                 :json_property => :terms,
-                                :always_inline => true)
+                                :always_resolve => true)
 
 
   def validate
