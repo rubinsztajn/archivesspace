@@ -32,7 +32,7 @@ describe 'Person agent controller' do
 
     person.save
 
-    JSONModel(:agent_person).find(id).agent_contacts
+    JSONModel(:agent_person).find(id).agent_contacts[1]['name'].should eq("A separate contact")
 
   end
 
