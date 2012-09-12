@@ -10,6 +10,7 @@ class AgentsController < ApplicationController
   end
 
   def new
+    @name_type = :name_person
     @agent = JSONModel(:"#{params[:type]}").new({:agent_type => params[:type]})._always_valid!
     @agent.names = [JSONModel(:name_person).new._always_valid!]
   end
@@ -19,6 +20,7 @@ class AgentsController < ApplicationController
   end
 
   def create
+    @name_type = :name_person
     handle_crud(:instance => :agent,
                 :model => JSONModel(:"#{params[:type]}"),
                 :on_invalid => ->(){

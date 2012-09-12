@@ -27,9 +27,11 @@
 
   <section id="primary_name">
     <h3>Primary Name</h3>
-    <%= f.fields_for :names, @agent.names[0] do | primary_name_fields | %>
-      <%= render :partial => "agents/name_forms/#{@agent.agent_type}", :locals => {:f => primary_name_fields} %>
+
+    <% f.with_jsonmodel("names[]", @agent.names[0], @name_type) do %>
+    <%= render :partial => "agents/name_forms/#{@agent.agent_type}", :locals => {:f => f} %>
     <% end %>
+
   </section>
 
   <section id="secondary_names">
