@@ -29,7 +29,7 @@ describe 'Generic agent controller' do
   end
 
 
-  it "lets you create a person and get them back" do
+  it "lets you list all agents of any type" do
     create_agents
 
     types = JSONModel.all('/agents', :agent_type).map {|agent| agent.agent_type}.sort
