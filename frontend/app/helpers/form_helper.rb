@@ -195,7 +195,7 @@ module FormHelper
       @template.text_area(@object_name, method, {
                              "data-original_value" => current[method],
                              :object => current,
-                             :force_name => current_name(method),
+                             :name => current_name(method),
                              :id => current_name(method, true)
                            }.merge(opts))
     end

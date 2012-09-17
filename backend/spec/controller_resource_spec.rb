@@ -163,9 +163,7 @@ describe 'Resources controller' do
     id = resource.save
 
     JSONModel(:resource).find(id).extents[0].length === 1
-    extent_uri = JSONModel(:resource).find(id).extents[0]
-    JSONModel(:resource).find(id, "resolve[]" => "extents").extents[0]["portion"] === "whole"
-    JSONModel(:resource).find(id, "resolve[]" => "extents").extents[0]["uri"] === extent_uri
+    JSONModel(:resource).find(id).extents[0]["portion"] === "whole"
   end
 
 end

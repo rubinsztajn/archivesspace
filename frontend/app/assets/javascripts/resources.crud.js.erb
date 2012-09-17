@@ -307,12 +307,14 @@ $(function() {
 
 
   var addEventBindings = function() {
-    $container.on("click", "#extents > h3 > .btn", function() {
+    $container.on("click", "#extent > h3 > .btn", function() {
       var extent_forms = $(".subform.extent-fields").length;
       $("#extents_container", $container).append(AS.renderTemplate("extent_form_template", {index: extent_forms}));
+      $("form", $container).triggerHandler("form-changed");
     });
      $container.on("click", ".subform-remove", function() {
        $(this).parents(".subform:first").remove();
+       $("form", $container).triggerHandler("form-changed");
      });
   }
 
