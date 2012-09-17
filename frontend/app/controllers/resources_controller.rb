@@ -5,7 +5,7 @@ class ResourcesController < ApplicationController
   end
 
   def show
-    @resource = JSONModel(:resource).find(params[:id], "resolve[]" => "subjects")
+    @resource = JSONModel(:resource).find(params[:id], "resolve[]" => ["subjects", "extents"])
 
     if params[:inline]
       return render :partial => "resources/show_inline"
@@ -16,10 +16,11 @@ class ResourcesController < ApplicationController
 
   def new
     @resource = JSONModel(:resource).new({:title => "New Resource"})._always_valid!
+    @resource.extents = [JSONModel(:extent).new._always_valid!]
   end
 
   def edit
-    @resource = JSONModel(:resource).find(params[:id], "resolve[]" => "subjects")
+    @resource = JSONModel(:resource).find(params[:id], "resolve[]" => "subjects, extent")
 
     if params[:inline]
       return render :partial => "resources/edit_inline"
