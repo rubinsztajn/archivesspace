@@ -508,6 +508,21 @@ describe "ArchivesSpace user interface" do
   end
 
 
+  it "Can delete an existing date when editing an Accession" do
+    @driver.find_element(:link, 'Edit').click
+
+    # remove the first date
+    @driver.find_element(:css => '#dates .subform-remove').click
+
+    # save!
+    @driver.find_element(:css => "form#accession_form button[type='submit']").click
+
+    # check remaining date
+    date_headings = @driver.find_elements(:css => '#dates .accordion-heading')
+    date_headings.length.should eq (1)
+  end
+
+
   it "Notifies of errors and warnings when creating an invalid resource" do
     @driver.find_element(:link, "Create").click
     @driver.find_element(:link, "Resource").click
