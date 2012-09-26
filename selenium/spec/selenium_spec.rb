@@ -287,12 +287,16 @@ describe "ArchivesSpace user interface" do
 
   it "Sort name updates when other name fields are updated" do
     @driver.find_element(:id => "agent[names][0][primary_name]").clear_and_send_keys ["Hendrix", :tab]
-    @driver.find_element(:id => "agent[names][0][rest_of_name]").clear_and_send_keys "" #fudge focus away from primary_name
+    @driver.find_element(:id => "agent[names][0][rest_of_name]").clear_and_send_keys "woo"
+    @driver.find_element(:id => "agent[names][0][rest_of_name]").clear
+    sleep 2
 
     @driver.find_element(:id => "agent[names][0][sort_name]").attribute("value").should eq("Hendrix")
 
     @driver.find_element(:id => "agent[names][0][rest_of_name]").clear_and_send_keys ["Johnny Allen", :tab]
-    @driver.find_element(:id => "agent[names][0][suffix]").clear_and_send_keys "" #fudge focus away from rest_of_name
+    @driver.find_element(:id => "agent[names][0][suffix]").clear_and_send_keys "woo"
+    @driver.find_element(:id => "agent[names][0][suffix]").clear
+    sleep 2
 
     @driver.find_element(:id => "agent[names][0][sort_name]").attribute("value").should eq("Hendrix, Johnny Allen")
   end
@@ -456,7 +460,7 @@ describe "ArchivesSpace user interface" do
     extent_headings[0].text.should eq ("10 Cassettes")
   end
 
-=begin
+
   it "Can create an Accession with some dates" do
     @driver.find_element(:link, "Create").click
     @driver.find_element(:link, "Accession").click
@@ -481,9 +485,28 @@ describe "ArchivesSpace user interface" do
     date_label_select.find_elements( :tag_name => "option" ).each do |option|
       option.click if option.attribute("value") === "digitized"
     end
-    @driver.find_element(:id => "accession[dates][0][date_type]").click
+    @driver.find_element(:css => "#date_type_0 label[href='#date_type_expression_0']").click
+    sleep 2 # wait for dropdown/enabling of inputs
+    @driver.find_element(:id => "accession[dates][0][expression]").clear_and_send_keys "The day before yesterday."
+
+    #populate the second date    
+    date_label_select = @driver.find_element(:id => "accession[dates][1][label]")
+    date_label_select.find_elements( :tag_name => "option" ).each do |option|
+      option.click if option.attribute("value") === "other"
+    end
+    @driver.find_element(:css => "#date_type_1 label[href='#date_type_inclusive_1']").click
+    sleep 2 # wait for dropdown/enabling of inputs
+    @driver.find_element(:id => "accession[dates][1][begin]_inclusive").clear_and_send_keys "2012-05-14"
+    @driver.find_element(:id => "accession[dates][1][end]_inclusive").clear_and_send_keys "2013-05-14"
+
+    # save!
+    @driver.find_element(:css => "form#accession_form button[type='submit']").click
+
+    # check dates
+    date_headings = @driver.find_elements(:css => '#dates .accordion-heading')
+    date_headings.length.should eq (2)    
   end
-=end
+
 
   it "Notifies of errors and warnings when creating an invalid resource" do
     @driver.find_element(:link, "Create").click
