@@ -176,20 +176,27 @@ describe "ArchivesSpace user interface" do
   end
 
 
-  it "Fails logins with invalid credentials" do
+  ### Examples
+
+
+  # Users and authentication
+
+  it "fails logins with invalid credentials" do
+
     @driver.find_element(:link, "Sign In").click
     @driver.find_element(:id, 'user_username').clear_and_send_keys "oopsie"
     @driver.find_element(:id, 'user_password').clear_and_send_keys "daisies"
-
     @driver.find_element(:id, 'login').click
 
     @driver.find_element(:css => "p.help-inline.login-message").text.should eq('Login attempt failed')
 
     @driver.find_element(:link, "Sign In").click
+
   end
 
 
-  it "Successfully creates a user" do
+  it "can register a new user" do
+
     @driver.find_element(:link, "Sign In").click
     @driver.find_element(:link, "Register now").click
 
@@ -197,28 +204,44 @@ describe "ArchivesSpace user interface" do
     @driver.find_element(:id, "createuser[name]").clear_and_send_keys @user
     @driver.find_element(:id, "createuser[password]").clear_and_send_keys "testuser"
     @driver.find_element(:id, "createuser[confirm_password]").clear_and_send_keys "testuser"
-
     @driver.find_element(:id, 'create_account').click
 
     @driver.find_element(:css => "span.user-label").text.should match(/#{@user}/)
+
   end
 
 
-  it "Can log out" do
+  it "can log out" do
+
     logout(@driver)
+
+    @driver.find_element(:link, "Sign In").text.should eq "Sign In"
+
   end
 
 
-  it "Can log in with the user just created" do
+  it "can log in with the user just created" do
+
     @driver.find_element(:link, "Sign In").click
     @driver.find_element(:id, 'user_username').clear_and_send_keys @user
     @driver.find_element(:id, 'user_password').clear_and_send_keys "testuser"
-
     @driver.find_element(:id, 'login').click
+
+    @driver.find_element(:css => "span.user-label").text.should match(/#{@user}/)
+
   end
 
 
-  it "Flags errors when creating a repository with missing fields" do
+  # Repositories
+
+  test_repo_code_1 = "test1#{Time.now.to_i}"
+  test_repo_name_1 = "test repository 1 - #{Time.now}"
+  test_repo_code_2 = "test2#{Time.now.to_i}"
+  test_repo_name_2 = "test repository 2 - #{Time.now}"
+
+
+  it "flags errors when creating a repository with missing fields" do
+
     @driver.find_element(:css, '.repository-container .btn').click
     @driver.find_element(:link, "Create a Repository").click
     @driver.find_element(:id => "repository_description").clear_and_send_keys "missing repo code"
@@ -226,37 +249,55 @@ describe "ArchivesSpace user interface" do
 
     @driver.find_element(:css => "div.alert.alert-error").text.should eq('Repository code - Property is required but was missing')
     @driver.find_element(:css => "div.modal-footer button.btn").click
+
   end
 
 
-  test_repo_code_1 = "test1#{Time.now.to_i}"
-  test_repo_name_1 = "test repository 1 - #{Time.now}"
-  test_repo_code_2 = "test2#{Time.now.to_i}"
-  test_repo_name_2 = "test repository 2 - #{Time.now}"
+  it "can create a repository" do
 
-  it "Can create a repository" do
     @driver.find_element(:css, '.repository-container .btn').click
     @driver.find_element(:link, "Create a Repository").click
     @driver.find_element(:id => "repository_repo_code").clear_and_send_keys test_repo_code_1
     @driver.find_element(:id => "repository_description").clear_and_send_keys test_repo_name_1
     @driver.find_element(:css => "form#new_repository input[type='submit']").click
+
   end
 
 
-  it "Can create and select a second repository" do
+  it "can create a second repository" do
+
     @driver.find_element(:css, '.repository-container .btn').click
     @driver.find_element(:link, "Create a Repository").click
     @driver.find_element(:id => "repository_repo_code").clear_and_send_keys test_repo_code_2
     @driver.find_element(:id => "repository_description").clear_and_send_keys test_repo_name_2
     @driver.find_element(:css => "form#new_repository input[type='submit']").click
 
-    ## Select the second repository
-    @driver.find_element(:css, '.repository-container .btn').click
-    @driver.find_element(:link_text => test_repo_code_2).click
   end
 
 
-  it "Notifies of errors and warnings when creating an invalid Person Agent" do
+  it "can select either of the created repositories" do
+
+    @driver.find_element(:css, '.repository-container .btn').click
+    @driver.find_element(:link_text => test_repo_code_2).text.should eq test_repo_code_2
+    @driver.find_element(:link_text => test_repo_code_2).click
+    @driver.find_element(:css, 'span.current-repository-id').text.should eq test_repo_code_2
+
+    @driver.find_element(:css, '.repository-container .btn').click
+    @driver.find_element(:link_text => test_repo_code_1).text.should eq test_repo_code_1
+    @driver.find_element(:link_text => test_repo_code_1).click
+    @driver.find_element(:css, 'span.current-repository-id').text.should eq test_repo_code_1
+
+    @driver.find_element(:css, '.repository-container .btn').click
+    @driver.find_element(:link_text => test_repo_code_2).click
+    @driver.find_element(:css, 'span.current-repository-id').text.should eq test_repo_code_2
+
+  end
+
+
+  # Person Agents
+
+  it "reports errors and warnings when creating an invalid Person Agent" do
+
     @driver.find_element(:link, 'Create').click
     @driver.execute_script("$('.nav .dropdown-submenu a:contains(Agent)').focus()"); 
     @driver.find_element(:link, 'Person').click
@@ -264,49 +305,60 @@ describe "ArchivesSpace user interface" do
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
     @driver.find_element(:css, ".errors-names_0_rules").text.should eq('Rules - is required')
     @driver.find_element(:css, ".errors-names_0_primary_name").text.should eq('Primary Name - Property is required but was missing')
+
   end
 
 
-  it "Notifies error when Authority ID is provided without a Source" do
+  it "reports an error when Authority ID is provided without a Source" do
+
     @driver.find_element(:id => "agent[names][0][authority_id]").clear_and_send_keys "authid123"
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
     @driver.find_element(:css, ".errors-names_0_source").text.should eq('Source - is required')
+
   end
 
-  it "Notifies error when Source is provided without an Authority ID" do
-    @driver.find_element(:id => "agent[names][0][authority_id]").clear_and_send_keys ""
 
+  it "reports an error when Source is provided without an Authority ID" do
+
+    @driver.find_element(:id => "agent[names][0][authority_id]").clear_and_send_keys ""
     source_select = @driver.find_element(:id => "agent[names][0][source]")
     source_select.find_elements( :tag_name => "option" ).each do |option|
       option.click if option.attribute("value") === "local"
     end
 
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
+
     @driver.find_element(:css, ".errors-names_0_authority_id").text.should eq('Authority ID - is required')
+
   end
 
-  it "Sort name updates when other name fields are updated" do
+
+  it "updates Sort Name when other name fields are updated" do
+
     @driver.find_element(:id => "agent[names][0][primary_name]").clear_and_send_keys ["Hendrix", :tab]
-
     @driver.find_element(:id => "agent[names][0][sort_name]").attribute("value").should eq("Hendrix")
-
     @driver.find_element(:id => "agent[names][0][rest_of_name]").clear_and_send_keys ["Johnny Allen", :tab]
 
     @driver.find_element(:id => "agent[names][0][sort_name]").attribute("value").should eq("Hendrix, Johnny Allen")
+
   end
 
-  it "Changing Direct Order update Sort Name" do
+
+  it "changing Direct Order updates Sort Name" do
+
     direct_order_select = @driver.find_element(:id => "agent[names][0][direct_order]")
     direct_order_select.find_elements( :tag_name => "option" ).each do |option|
       option.click if option.attribute("value") === "inverted"
     end
 
     @driver.find_element(:id => "agent[names][0][sort_name]").attribute("value").should eq("Johnny Allen Hendrix")
+
   end
 
-  it "Can add a secondary name and validations match index of name form" do
+
+  it "can add a secondary name and validations match index of name form" do
+
     @driver.find_element(:css => '#secondary_names h3 .btn').click
-    
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
 
     @driver.find_element(:css, ".errors-names_1_rules").text.should eq('Rules - is required')
@@ -318,50 +370,70 @@ describe "ArchivesSpace user interface" do
     end
     @driver.find_element(:id => "agent[names][1][primary_name]").clear_and_send_keys "Hendrix"
     @driver.find_element(:id => "agent[names][1][rest_of_name]").clear_and_send_keys "Jimi"
+
   end
 
-  it "Can add a contact to a person" do
-    @driver.find_element(:css => '#contacts h3 .btn').click
 
+  it "can add a contact to a person" do
+
+    @driver.find_element(:css => '#contacts h3 .btn').click
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
 
     @driver.find_element(:css, ".errors-agent_contacts_0_name").text.should eq('Contact Description - Property is required but was missing')
 
     @driver.find_element(:id => "agent[agent_contacts][0][name]").clear_and_send_keys "Email Address"
     @driver.find_element(:id => "agent[agent_contacts][0][email]").clear_and_send_keys "jimi@rocknrollheaven.com"
+
   end
 
-  it "Can save a person and view readonly view of person" do
+
+  it "can save a person and view readonly view of person" do
+
     @driver.find_element(:id => "agent[names][0][authority_id]").clear_and_send_keys "authid123"
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
 
     @driver.find_element(:css => '.record-pane h2').text.should eq("Johnny Allen Hendrix Agent")
+
   end
 
-  it "Allows edit of a person" do
+
+  it "can present a person edit form" do
+
     @driver.find_element(:link, 'Edit').click
+    @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').text.should eq("Save Person")
+
   end
 
-  it "Allows removal of the contact details" do
+
+  it "can remove contact details" do
+
     @driver.find_element(:css => '#contacts .subform-remove').click
     expect {
       @driver.find_element(:id => "agent[agent_contacts][0][name]")
     }.to raise_error
 
     @driver.find_element(:css => '#archivesSpaceSidebar button.btn-primary').click
-
     expect {
       @driver.find_element(:css => "#contacts h3")
     }.to raise_error
+
   end
+
 
   it "displays the agent in the agent's index page" do
+
     @driver.find_element(:link, 'Browse Agents').click
-    @driver.find_element_with_text('//td', /Johnny Allen Hendrix/)
+    expect {
+      @driver.find_element_with_text('//td', /Johnny Allen Hendrix/)
+    }.to_not raise_error
+
   end
 
 
-  it "Can opt to ignore warnings when creating an accession" do
+  # Accessions
+
+  it "gives option to ignore warnings when creating an Accession" do
+
     @driver.find_element(:link, "Create").click
     @driver.find_element(:link, "Accession").click
 
