@@ -39,6 +39,10 @@ class ArchivesSpaceService
                       "The ability to create new repositories",
                       :level => "global")
 
+    Permission.define("view_all_users",
+                      "The ability to view users and their permissions",
+                      :level => "global")
+
     Permission.define("manage_repository",
                       "The ability to manage a given repository",
                       :level => "repository")

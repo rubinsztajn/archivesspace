@@ -73,8 +73,33 @@ describe 'User controller' do
     JSON(last_response.body)["permissions"]["ARCHIVESSPACE"].should eq(["manage_repository"])
 
     # But also with the user
-    user = JSONModel(:user).find('test1')
-    user.permissions["ARCHIVESSPACE"].should eq(["manage_repository"])
+    as_test_user("test1") do
+      user = JSONModel(:user).find('test1')
+      user.permissions["ARCHIVESSPACE"].should eq(["manage_repository"])
+    end
+  end
+
+
+  it "Lets you view your own user but not others (unless you're admin)" do
+
+    JSONModel(:user).from_hash(:username => "test2",
+                               :name => "Tester").save(:password => "password")
+
+    as_test_user("test1") do
+      JSONModel(:user).find("test1").username.should eq("test1")
+
+      expect {
+        JSONModel(:user).find("test2")
+      }.to raise_error(AccessDeniedException)
+
+      expect {
+        JSONModel(:user).find("does-not-even-exist")
+      }.to raise_error(AccessDeniedException)
+    end
+
+    as_test_user("admin") do
+      JSONModel(:user).find("test2").username.should eq("test2")
+    end
   end
 
 end

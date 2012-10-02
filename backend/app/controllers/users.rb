@@ -24,6 +24,10 @@ class ArchivesSpaceService < Sinatra::Base
   Endpoint.get('/users/:username')
     .description("Get a user's details (including their current permissions)")
     .params(["username", nil, "The username of interest"])
+    .preconditions(proc {
+                     (current_user.username == params[:username].downcase) ||
+                     current_user.can?(:view_all_users)
+                   })
     .returns([200, "(:user)"]) \
   do
     user = User[:username => params[:username].downcase]
