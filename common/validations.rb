@@ -3,7 +3,6 @@ module JSONModel::Validations
 
 
   def self.check_identifier(hash)
-    puts hash.inspect
     ids = (0...4).map {|i| hash["id_#{i}"]}
 
     errors = []
