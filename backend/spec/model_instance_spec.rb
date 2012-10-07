@@ -16,7 +16,6 @@ describe 'Instance model' do
                                                                  }))
 
     Instance[instance[:id]].instance_type.should eq("text")
-    puts Instance[instance[:id]].inspect
     Instance[instance[:id]].container.type_1.should eq("A Container")
   end
 

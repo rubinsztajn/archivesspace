@@ -1,0 +1,15 @@
+<div id="instance_form_template"><!--
+  <%= f.with_jsonmodel("instances[]", {}, :instance, :index => "${index}") do %>
+    <% render :partial => "instances/form", :locals => {:f => f} %>
+  <% end %>
+--></div>
+
+<div id="container_form_template"><!--
+  <%= f.with_jsonmodel("instances][${index}][container", {}, :container, :index => "0") do %>
+      <% render :partial => "container/form", :locals => {:f => f} %>
+  <% end %>
+--></div>
+
+<div id="empty_instance_type_tempalte"><!--
+  <div class="alert alert-warning">Please select an instance type</div>
+--></div>

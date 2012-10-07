@@ -234,7 +234,6 @@ module FormHelper
 
     def jsonmodel_field(method, opts = {})
       schema = current.class.schema
-
       if not schema["properties"].has_key?(method.to_s)
         return "PROBLEM: #{object_name} does not define #{method} in its schema"
       end
@@ -243,7 +242,7 @@ module FormHelper
       if attr_definition.has_key?("enum")
         options_array = attr_definition["enum"].collect {|option| [I18n.t(current_i18n("#{method}_#{option}")), option]}
 
-        if not attr_definition["required"]
+        if !attr_definition["required"] || opts[:add_empty_option] === true
           options_array = [""].concat(options_array)
         end
 

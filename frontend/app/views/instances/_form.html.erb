@@ -1,0 +1,17 @@
+<div class="subrecord-form-fields" data-allow-removal="true">
+  <%= f.label_and_field :instance_type, :field_opts => {:add_empty_option => true} %>
+  <hr/>
+  <div class="instance-container-or-digital-object">
+    <% if f.current["instance_type"].blank? %>
+      <div class="alert alert-warning">Please select an instance type</div>
+    <% elsif f.current["instance_type"] === "digital_object" %>
+      <div class="alert alert-info">TODO</div>
+    <% elsif f.current["instance_type"] === "digital_object_link" %>
+      <div class="alert alert-info">TODO</div>
+    <% else %>
+      <%= f.with_jsonmodel("container", f.current["container"], :container, :index => index) do %>
+        <% render :partial => "container/form", :locals => {:f => f} %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
