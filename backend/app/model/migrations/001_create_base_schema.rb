@@ -170,6 +170,50 @@ Sequel.migration do
     end
 
 
+    create_table(:instances) do
+      primary_key :id
+
+      Integer :lock_version, :default => 0, :null => false
+
+      Integer :resource_id
+
+      String :instance_type, :null => false
+
+      DateTime :create_time, :null => false
+      DateTime :last_modified, :null => false
+    end
+
+    alter_table(:instances) do
+      add_foreign_key([:resource_id], :resources, :key => :id)
+    end
+
+
+    create_table(:containers) do
+      primary_key :id
+
+      Integer :lock_version, :default => 0, :null => false
+
+      Integer :instance_id
+
+      String :type_1, :null => false
+      String :indicator_1, :null => false
+      String :barcode_1
+
+      String :type_2
+      String :indicator_2
+
+      String :type_3
+      String :indicator_3
+
+      DateTime :create_time, :null => false
+      DateTime :last_modified, :null => false
+    end
+
+    alter_table(:containers) do
+      add_foreign_key([:instance_id], :instances, :key => :id)
+    end
+
+
     create_table(:archival_objects) do
       primary_key :id
 
@@ -592,7 +636,7 @@ Sequel.migration do
 
   down do
 
-    [:external_documents, :rights_statements,
+    [:external_documents, :rights_statements, :containers, :instances,
      :subjects_terms, :archival_objects_subjects, :resources_subjects, :accessions_subjects, :subjects, :terms,
      :agent_contacts, :name_person, :name_family, :agent_person, :agent_family,
      :name_corporate_entity, :name_software, :agent_corporate_entity, :agent_software,

@@ -96,4 +96,21 @@ module JSONModel::Validations
     end
   end
 
+
+  def self.check_container(hash)
+    errors = []
+
+    if hash["instance_type"] and not ["digital_object", "digital_object_link"].include?(hash['instance_type'])
+      errors << ["container", "is_required"] if hash["container"].nil?
+    end
+
+    errors
+  end
+
+  if JSONModel(:instance)
+    JSONModel(:instance).add_validation("check_container") do |hash|
+      check_container(hash)
+    end
+  end
+
 end

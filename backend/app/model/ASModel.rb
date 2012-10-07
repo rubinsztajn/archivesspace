@@ -116,6 +116,7 @@ module ASModel
 
     def create_from_json(json, extra_values = {})
       self.strict_param_setting = false
+
       obj = self.create(map_json_to_db_types(json.class.schema, json.to_hash.merge(extra_values)))
 
       self.apply_linked_database_records(obj, json, extra_values)
@@ -192,7 +193,12 @@ module ASModel
         # Read the subrecords from our JSON blob and fetch or create
         # the corresponding subrecord from the database.
         model = Kernel.const_get(linked_record[:association][:class_name])
-        add_record_method = "add_#{linked_record[:association][:name].to_s.singularize}"
+        if linked_record[:association][:type] === :one_to_one
+          add_record_method = linked_record[:association][:name].to_s
+          json[linked_record[:json_property]] = [json[linked_record[:json_property]]]
+        else
+          add_record_method = "add_#{linked_record[:association][:name].to_s.singularize}"
+        end
 
         (json[linked_record[:json_property]] or []).each do |json_or_uri|
 
