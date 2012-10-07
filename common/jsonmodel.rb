@@ -1,5 +1,6 @@
 require 'json-schema'
 require_relative 'json_schema_utils'
+require_relative 'asutils'
 
 
 module JSONModel
@@ -320,7 +321,7 @@ module JSONModel
 
 
       def initialize(params = {}, warnings = [])
-        @data = self.class.keys_as_strings(params)
+        @data = ASUtils.keys_as_strings(params)
         @warnings = warnings
 
         @data = self.class.apply_schema_defaults(@data)
@@ -575,17 +576,6 @@ module JSONModel
         end
 
         uri
-      end
-
-
-      def self.keys_as_strings(hash)
-        result = {}
-
-        hash.each do |key, value|
-          result[key.to_s] = value
-        end
-
-        result
       end
 
 
