@@ -511,10 +511,6 @@ Sequel.migration do
 
       Integer :lock_version, :default => 0, :null => false
 
-      Integer :accession_id, :null => true
-      Integer :archival_object_id, :null => true
-      Integer :resource_id, :null => true
-
       Integer :repo_id, :null => false
 
       String :identifier, :null => false
@@ -546,14 +542,28 @@ Sequel.migration do
 
 
     alter_table(:rights_statements) do
-      add_foreign_key([:accession_id], :accessions, :key => :id)
-      add_foreign_key([:archival_object_id], :archival_objects, :key => :id)
-      add_foreign_key([:resource_id], :resources, :key => :id)
-
       add_foreign_key([:repo_id], :repositories, :key => :id)
       add_index([:repo_id, :identifier], :unique => true)
     end
 
+
+    records_supporting_rights_statements= [:accession, :archival_object,
+                                           :resource,
+                                           :agent_person,
+                                           :agent_family,
+                                           :agent_corporate_entity,
+                                           :agent_software]
+
+    records_supporting_rights_statements.each do |record|
+      table = table_exists?(record) ? record : record.to_s.pluralize.intern
+
+      create_join_table({
+                          "#{record}_id".intern => table,
+                          :rights_statement_id => :rights_statements
+                        },
+                        :name => "#{table}_rights_statements",
+                        :index_options => {:name => "rs_#{record}_idx"})
+    end
 
     create_table(:external_documents) do
       primary_key :id

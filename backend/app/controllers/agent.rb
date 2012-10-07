@@ -1,6 +1,7 @@
 class ArchivesSpaceService < Sinatra::Base
 
-  Endpoint.get('/agents')
+  Endpoint.get('/repositories/:repo_id/agents')
+    .params( ["repo_id", :repo_id])
     .description("Get all agent records")
     .returns([200, "[(:agent)]"]) \
   do

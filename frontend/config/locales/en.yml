@@ -162,6 +162,8 @@ en:
       email: Email Address
     _external_documents:
       <<: *external_document_attributes
+    _rights_statements:
+      <<: *rights_statement_attributes
   agent_person:
     <<: *agent_attributes
   agent_family:

@@ -4,6 +4,7 @@ class AgentFamily < Sequel::Model(:agent_family)
 
   include ASModel
   include ExternalDocuments
+  include RightsStatements
 
   one_to_many :name_family
   one_to_many :agent_contacts
