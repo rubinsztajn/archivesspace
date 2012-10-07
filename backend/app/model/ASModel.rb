@@ -34,9 +34,9 @@ module ASModel
   end
 
 
-  def update_from_json(json, opts = {})
+  def update_from_json(json, extra_values = {})
     old = JSONModel(json.class.record_type).from_hash(json.to_hash.merge(self.values)).to_hash
-    changes = json.to_hash.merge(opts)
+    changes = json.to_hash.merge(extra_values)
 
     old.each do |k, v|
       if not changes.has_key?(k)
@@ -50,7 +50,7 @@ module ASModel
 
     id = self.save
 
-    self.class.apply_linked_database_records(self, json, opts)
+    self.class.apply_linked_database_records(self, json, extra_values)
 
     id
   end
@@ -141,6 +141,12 @@ module ASModel
         if mapping && hash.has_key?(property)
           hash[property] = mapping[:json_to_db].call(hash[property])
         end
+      end
+
+      # Linked records don't belong in the values we send for the record being
+      # created/updated.
+      (ASModel.linked_records[self] or []).each do |linked_record|
+        hash.delete(linked_record[:json_property].to_s)
       end
 
       hash
