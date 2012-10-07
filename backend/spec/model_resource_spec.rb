@@ -77,6 +77,7 @@ describe 'Resource model' do
     }.to raise_error
   end
 
+
   it "Throws an exception if extents is empty" do
     expect {
       resource = Resource.create_from_json(JSONModel(:resource).
@@ -88,4 +89,36 @@ describe 'Resource model' do
                                            :repo_id => @repo_id)
     }.to raise_error
   end
+
+
+  it "can be created with an instance" do
+    resource = Resource.create_from_json(JSONModel(:resource).
+                                           from_hash({
+                                                       "title" => "A new resource",
+                                                       "id_0" => "abc123",
+                                                       "extents" => [
+                                                         {
+                                                           "portion" => "whole",
+                                                           "number" => "5 or so",
+                                                           "extent_type" => "reels",
+                                                         }
+                                                       ],
+                                                       "instances" => [
+                                                         {
+                                                           "instance_type" => "text",
+                                                           "container" => {
+                                                             "type_1" => "A Container",
+                                                             "indicator_1" => "555-1-2",
+                                                             "barcode_1" => "00011010010011",
+                                                           }
+                                                         }
+                                                       ]
+                                                     }),
+                                         :repo_id => @repo_id)
+
+    Resource[resource[:id]].instances.length.should eq(1)
+    Resource[resource[:id]].instances[0].instance_type.should eq("text")
+    Resource[resource[:id]].instances[0].container.type_1.should eq("A Container")
+  end
+
 end
