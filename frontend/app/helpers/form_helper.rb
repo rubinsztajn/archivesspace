@@ -291,8 +291,8 @@ module FormHelper
                             :uncheced_value => false,
                             "data-original_value" => current[method],
                             :object => current,
-                            :force_name => current_name(method),
-                            :force_id => "#{current_name(method, true)}"
+                            :name => current_name(method),
+                            :id => "#{current_name(method, true)}"
       }.merge(opts))
     end
 
