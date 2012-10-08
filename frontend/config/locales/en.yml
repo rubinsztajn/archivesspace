@@ -1,6 +1,12 @@
 en:
   container: &container_attributes
     type_1: Type 1
+    indicator_1: Indicator 1
+    barcode_1: Barcode 1
+    type_2: Type 2
+    indicator_2: Indicator 2
+    type_3: Type 3
+    indicator_3: Indicator 3
     _html:
       plural: Containers
       singular: Container

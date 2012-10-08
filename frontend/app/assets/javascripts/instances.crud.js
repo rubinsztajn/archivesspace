@@ -1,27 +1,36 @@
 $(function() {
 
   var renderContainer = function() {
-    if ($(".container-form-fields", this).length) {
+    if ($(".container-form-fields:visible", this).length) {
       // container already rendered
       return;
     }
 
-    var index_data = {};
-    index_data.index = $(".instance-container-or-digital-object", $(this).parents("form")).index($(".instance-container-or-digital-object", this));
-
-    $(".instance-container-or-digital-object", this).html(AS.renderTemplate("container_form_template", index_data));
+    $(".instance-container-or-digital-object > div", this).hide();
+    $(".instance-container-or-digital-object .instance-type-with-container", this).show();
+    $(".instance-container-or-digital-object :input:visible", this).removeAttr("disabled");
+    $(".instance-container-or-digital-object :input:hidden", this).attr("disabled", "disabled");
   };
 
   var renderDigitalObject = function() {
-    $(".instance-container-or-digital-object", this).html("<div class='alert alert-info'>TODO</div>");
+    $(".instance-container-or-digital-object > div", this).hide();
+    $(".instance-container-or-digital-object .instance-type-digital-object", this).show();
+    $(".instance-container-or-digital-object :input:visible", this).removeAttr("disabled");
+    $(".instance-container-or-digital-object :input:hidden", this).attr("disabled", "disabled");
   };
 
   var renderDigitalObjectLink = function() {
-    $(".instance-container-or-digital-object", this).html("<div class='alert alert-info'>TODO</div>");
+    $(".instance-container-or-digital-object > div", this).hide();
+    $(".instance-container-or-digital-object .instance-type-digital-object-link", this).show();
+    $(".instance-container-or-digital-object :input:visible", this).removeAttr("disabled");
+    $(".instance-container-or-digital-object :input:hidden", this).attr("disabled", "disabled");
   };
 
   var renderNilValue =function() {
-    $(".instance-container-or-digital-object", this).html(AS.renderTemplate("empty_instance_type_tempalte"));
+    $(".instance-container-or-digital-object > div", this).hide();
+    $(".instance-container-or-digital-object .instance-type-nil", this).show();
+    $(".instance-container-or-digital-object :input:visible", this).removeAttr("disabled");
+    $(".instance-container-or-digital-object :input:hidden", this).attr("disabled", "disabled");
   }
 
   $(document).bind("subrecord.new", function(event, object_name, subform) {
@@ -36,7 +45,7 @@ $(function() {
         } else {
           $.proxy(renderContainer, subform)();
         }
-      });
+      }).triggerHandler("change");
     }
   });
 
