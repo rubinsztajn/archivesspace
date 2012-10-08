@@ -6,7 +6,7 @@
     <div class="alert alert-info instance-type-digital-object">TODO</div>
     <div class="alert alert-info instance-type-digital-object-link">TODO</div>
     <div class="instance-type-with-container">
-      <%= f.with_jsonmodel("container", f.current["container"] || {}, :container, :index => 0) do %>
+      <%= f.with_jsonmodel("container", f.current["container"] || {}, :container) do %>
         <% render :partial => "container/form", :locals => {:f => f} %>
       <% end %>
     </div>
