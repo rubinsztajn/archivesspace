@@ -125,12 +125,16 @@ module FormHelper
         new_method = ""
         split_path = method.split("/")
         split_path.each_with_index do |s, i|
+          # remove any indexes from the path
+          next if s.to_i.to_s === s
+
           # if s in path doesn't represent an index
           # and it isn't the last item in the path (the method)
           # prefix with '_'
           new_method += "_" if s.to_i.to_s != s && i < split_path.length - 1
           new_method += s
-          new_method += "/" if i < split_path.length - 1
+          new_method += "[" if i < split_path.length - 1
+          new_method += "]" if i === split_path.length - 1
         end
         method = new_method
       end
