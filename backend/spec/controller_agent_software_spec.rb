@@ -94,7 +94,9 @@ describe 'Software agent controller' do
     JSONModel::set_repository(@repo_id)
 
     software = JSONModel(:agent_software).find(id)
-    software.names[0]["software_name"].should eq("Eggplant car steering system")
+    # NOT THIS ONE.. as we names are currently global
+    #software.names[0]["software_name"].should eq("Eggplant car steering system")
+    software.names[0]["software_name"].should eq("Another name for this software")
   end
 
 end
