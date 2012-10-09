@@ -2,7 +2,7 @@ class AgentsController < ApplicationController
   before_filter :assign_types
 
   def index
-    @agents = JSONModel::all('/agents', :agent_type)
+    @agents = JSONModel::all("/repositories/#{session['repo_id']}/agents", :agent_type)
   end
 
   def show

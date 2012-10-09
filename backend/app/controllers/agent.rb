@@ -10,7 +10,7 @@ class ArchivesSpaceService < Sinatra::Base
               [AgentCorporateEntity, :agent_corporate_entity],
               [AgentSoftware, :agent_software]].map do |model, type|
 
-      model.all.collect {|agent| model.to_jsonmodel(agent, type).to_hash}
+      model.all.collect {|agent| model.to_jsonmodel(agent, type, params[:repo_id]).to_hash}
     end
 
     json_response(agents.flatten)
