@@ -40,7 +40,7 @@ class ArchivalObject < Sequel::Model(:archival_objects)
 
 
   def self.sequel_to_jsonmodel(obj, type, opts = {})
-    json = super(obj, type)
+    json = super
 
     if obj.resource_id
       json.resource = JSONModel(:resource).uri_for(obj.resource_id,

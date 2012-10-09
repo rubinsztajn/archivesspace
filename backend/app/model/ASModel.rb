@@ -236,7 +236,12 @@ module ASModel
     def sequel_to_jsonmodel(obj, model, opts = {})
       json = JSONModel(model).new(map_db_types_to_json(JSONModel(model).schema, obj.values.reject {|k, v| v.nil? }))
 
-      uri = json.class.uri_for(obj.id, {:repo_id => obj[:repo_id]})
+      # Sanity check
+      if (obj[:repo_id] && opts[:repo_id] && (obj[:repo_id] != opts[:repo_id]))
+        raise "Conflict between the repo_id in the DB and the repo_id passed in"
+      end
+
+      uri = json.class.uri_for(obj.id, {:repo_id => (obj[:repo_id] or opts[:repo_id])})
       json.uri = uri if uri
 
       # If there are linked records for this class, grab their URI references too

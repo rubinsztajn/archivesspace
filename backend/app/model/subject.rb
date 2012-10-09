@@ -41,7 +41,7 @@ class Subject < Sequel::Model(:subjects)
 
 
   def self.sequel_to_jsonmodel(obj, type, opts = {})
-    json = super(obj, type)
+    json = super
 
     json.vocabulary = JSONModel(:vocabulary).uri_for(obj.vocab_id)
 
