@@ -431,12 +431,14 @@ module JSONModel
 
       # Return the internal ID of this JSONModel.
       def id
+        return nil if not self.uri
+
         ref = JSONModel::parse_reference(self.uri)
 
         if ref
           ref[:id]
         else
-          nil
+          raise "Couldn't parse reference: #{self.uri}"
         end
       end
 
