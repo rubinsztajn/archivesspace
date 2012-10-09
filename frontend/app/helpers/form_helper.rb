@@ -305,6 +305,16 @@ module FormHelper
                            }.merge(opts))
     end
 
+    def jsonmodel_hidden_field(method, value, opts = {})
+      @template.hidden_field(@object_name, method, {
+        :value => value,
+        "data-original_value" => current[method],
+        :object => current,
+        :name => current_name(method),
+        :id => current_name(method, true)
+      }.merge(opts))
+    end
+
     def jsonmodel_date_field(method, opts)
       @template.text_field(@object_name, method, {
         :class => "date-field",

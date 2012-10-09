@@ -266,7 +266,7 @@ module ASModel
         obj = get_or_die(obj, repo_id)
       end
 
-      sequel_to_jsonmodel(obj, model, opts)
+      sequel_to_jsonmodel(obj, model, opts.merge({:repo_id => repo_id}))
     end
 
   end

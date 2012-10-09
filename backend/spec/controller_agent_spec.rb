@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'Generic agent controller' do
 
+
+  before(:each) do
+    make_test_repo
+  end
+
+
   def create_agents
     JSONModel(:agent_person).from_hash(:names => [{
                                                     :rules => "local",
@@ -31,7 +37,7 @@ describe 'Generic agent controller' do
   it "lets you list all agents of any type" do
     create_agents
 
-    types = JSONModel.all('/agents', :agent_type).map {|agent| agent.agent_type}.sort
+    types = JSONModel.all("/repositories/#{@repo_id}/agents", :agent_type).map {|agent| agent.agent_type}.sort
 
     types.should eq(["agent_family", "agent_person"])
   end

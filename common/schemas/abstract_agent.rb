@@ -5,6 +5,8 @@
     "properties" => {
       "uri" => {"type" => "string", "required" => false},
 
+      "repo_id" => {"type" => "integer"},
+
       "agent_type" => {
         "type" => "string",
         "required" => false,

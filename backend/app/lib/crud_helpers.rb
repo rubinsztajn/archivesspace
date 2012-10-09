@@ -2,7 +2,8 @@ module CrudHelpers
 
   def handle_update(model, id, jsonmodel, opts = {})
     obj = model.get_or_die(params[id], params[:repo_id])
-    obj.update_from_json(params[jsonmodel], opts)
+
+    obj.update_from_json(params[jsonmodel], opts.merge({:repo_id => params[:repo_id]}))
 
     updated_response(obj, params[jsonmodel])
   end

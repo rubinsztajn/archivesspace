@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'Family agent controller' do
 
+
+  before(:each) do
+    make_test_repo
+  end
+
+
   def create_family
     JSONModel(:agent_family).from_hash(:names => [{
                                                     "rules" => "local",

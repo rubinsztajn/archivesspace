@@ -1,8 +1,9 @@
 class ArchivesSpaceService < Sinatra::Base
 
-  Endpoint.post('/agents/software')
+  Endpoint.post('/repositories/:repo_id/agents/software')
     .description("Create a software agent")
-    .params(["agent", JSONModel(:agent_software), "The software to create", :body => true])
+    .params(["agent", JSONModel(:agent_software), "The software to create", :body => true],
+            ["repo_id", :repo_id])
     .returns([200, :created],
              [400, :error]) \
   do
@@ -10,10 +11,11 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
-  Endpoint.post('/agents/software/:agent_id')
+  Endpoint.post('/repositories/:repo_id/agents/software/:agent_id')
     .description("Update a software agent")
     .params(["agent_id", Integer, "The ID of the software to update"],
-            ["agent", JSONModel(:agent_software), "The software to create", :body => true])
+            ["agent", JSONModel(:agent_software), "The software to create", :body => true],
+            ["repo_id", :repo_id])
     .returns([200, :updated],
              [400, :error]) \
   do
@@ -21,14 +23,16 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
 
-  Endpoint.get('/agents/software/:id')
+  Endpoint.get('/repositories/:repo_id/agents/software/:id')
     .description("Get a software by ID")
-    .params(["id", Integer, "ID of the software agent"])
+    .params(["id", Integer, "ID of the software agent"],
+            ["repo_id", :repo_id])
     .returns([200, "(:agent)"],
              [404, '{"error":"Agent not found"}']) \
   do
     json_response(AgentSoftware.to_jsonmodel(AgentSoftware.get_or_die(params[:id]),
-                                             :agent_software))
+                                             :agent_software,
+                                             params[:repo_id]))
   end
 
 end

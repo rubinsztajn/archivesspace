@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'Software agent controller' do
 
+
+  before(:each) do
+    make_test_repo
+  end
+
+
   def create_software
     JSONModel(:agent_software).from_hash(:names => [{
                                                     "rules" => "local",
@@ -33,8 +39,10 @@ describe 'Software agent controller' do
       "telephone" => "0118 999 881 999 119 725 3"
     }
 
-    software.save
-
+    puts "SAVE: #{software.save}"
+    puts software.inspect
+    puts "***"
+    puts JSONModel(:agent_software).find(id).inspect
     JSONModel(:agent_software).find(id).agent_contacts[1]['name'].should eq("A separate contact")
 
   end

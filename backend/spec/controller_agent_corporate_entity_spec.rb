@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'Corporate entity agent controller' do
 
+
+  before(:each) do
+    make_test_repo
+  end
+
+
   def create_corporate_entity
     JSONModel(:agent_corporate_entity).from_hash(:names => [{
                                                     "rules" => "local",

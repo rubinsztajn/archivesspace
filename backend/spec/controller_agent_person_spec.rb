@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'Person agent controller' do
 
+
+  before(:each) do
+    make_test_repo
+  end
+
+
   def create_person
     JSONModel(:agent_person).from_hash(:names => [{
                                                     :rules => "local",

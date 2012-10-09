@@ -1,10 +1,12 @@
 require_relative 'name_corporate_entity'
+require_relative 'agent_primary_name_mixin'
 
 class AgentCorporateEntity < Sequel::Model(:agent_corporate_entity)
 
   include ASModel
   include ExternalDocuments
   include RightsStatements
+  include AgentPrimaryNameMixin
 
   one_to_many :name_corporate_entity
   one_to_many :agent_contacts

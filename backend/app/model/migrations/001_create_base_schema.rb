@@ -409,6 +409,22 @@ Sequel.migration do
       add_foreign_key([:agent_software_id], :agent_software, :key => :id)
     end
 
+    agents_with_primary_name_mappings = [:person, :family, :software, :corporate_entity]
+    agents_with_primary_name_mappings.each do |agent_type|
+      create_table(:"#{agent_type}_primary_name_map") do
+        primary_key :id
+
+        Integer :repo_id, :null => false
+        Integer :"agent_#{agent_type}_id", :null => false
+        Integer :"name_#{agent_type}_id", :null => false
+      end
+
+      alter_table(:"#{agent_type}_primary_name_map") do
+        add_foreign_key([:repo_id], :repositories, :key => :id)
+        add_foreign_key([:"agent_#{agent_type}_id"], :"agent_#{agent_type}", :key => :id)
+        add_foreign_key([:"name_#{agent_type}_id"], :"name_#{agent_type}", :key => :id)
+      end
+    end
 
     create_table(:agent_contacts) do
       primary_key :id
@@ -602,7 +618,8 @@ Sequel.migration do
 
   down do
 
-    [:external_documents, :rights_statements,
+    [:person_primary_name_map, :family_primary_name_map, :software_primary_name_map, :corporate_entity_primary_name_map,
+     :external_documents, :rights_statements,
      :subjects_terms, :archival_objects_subjects, :resources_subjects, :accessions_subjects, :subjects, :terms,
      :agent_contacts, :name_person, :name_family, :agent_person, :agent_family,
      :name_corporate_entity, :name_software, :agent_corporate_entity, :agent_software,
