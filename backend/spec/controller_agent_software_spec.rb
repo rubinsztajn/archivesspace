@@ -39,13 +39,62 @@ describe 'Software agent controller' do
       "telephone" => "0118 999 881 999 119 725 3"
     }
 
-    puts "SAVE: #{software.save}"
-    puts software.inspect
-    puts "***"
-    puts JSONModel(:agent_software).find(id).inspect
+    software.save
+
     JSONModel(:agent_software).find(id).agent_contacts[1]['name'].should eq("A separate contact")
 
   end
 
+
+  it "lets you update a the primary name" do
+    id = JSONModel(:agent_software).from_hash(:names => [{
+                                                           "rules" => "local",
+                                                           "manufacturer" => "Magoo Software",
+                                                           "software_name" => "Eggplant car steering system",
+                                                           "version" => "2.0",
+                                                           "sort_name" => "Software, Magoo"
+                                                         },
+                                                         {
+                                                           "rules" => "local",
+                                                           "manufacturer" => "Another name for this manufacturer",
+                                                           "software_name" => "Another name for this software",
+                                                           "version" => "2.0",
+                                                           "sort_name" => "Software, Magoo"
+                                                         }]).save
+
+    software = JSONModel(:agent_software).find(id)
+    software.names[0]["software_name"].should eq("Eggplant car steering system")
+
+    another_repo = Repository.create(:repo_code => "ANOTHER_REPO",
+                             :description => "Another repository")
+    JSONModel::set_repository(another_repo.id)
+
+    software = JSONModel(:agent_software).find(id)
+    software.names = [
+               {
+                 "rules" => "local",
+                 "manufacturer" => "Another name for this manufacturer",
+                 "software_name" => "Another name for this software",
+                 "version" => "2.0",
+                 "sort_name" => "Software, Magoo"
+               },
+               {
+                 "rules" => "local",
+                 "manufacturer" => "Magoo Software",
+                 "software_name" => "Eggplant car steering system",
+                 "version" => "2.0",
+                 "sort_name" => "Software, Magoo"
+               }]
+
+    software.save
+
+    software = JSONModel(:agent_software).find(id)
+    software.names[0]["software_name"].should eq("Another name for this software")
+
+    JSONModel::set_repository(@repo_id)
+
+    software = JSONModel(:agent_software).find(id)
+    software.names[0]["software_name"].should eq("Eggplant car steering system")
+  end
 
 end

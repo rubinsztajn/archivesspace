@@ -227,7 +227,7 @@ module ASModel
 
     def get_or_die(id, repo_id = nil)
       # For a minute there I lost myself...
-      obj = repo_id.nil? ? self[id] : self[:id => id, :repo_id => repo_id]
+      obj = (repo_id.nil? or !self.columns.include?(:repo_id)) ? self[id] : self[:id => id, :repo_id => repo_id]
 
       obj or raise NotFoundException.new("#{self} not found")
     end

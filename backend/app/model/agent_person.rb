@@ -6,7 +6,7 @@ class AgentPerson < Sequel::Model(:agent_person)
   include ASModel
   include ExternalDocuments
   include RightsStatements
-  include AgentPrimaryNameMixin
+  #include AgentPrimaryNameMixin
 
   one_to_many :name_person
   one_to_many :agent_contacts

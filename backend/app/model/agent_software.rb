@@ -6,7 +6,7 @@ class AgentSoftware < Sequel::Model(:agent_software)
   include ASModel
   include ExternalDocuments
   include RightsStatements
-  include AgentPrimaryNameMixin
+  #include AgentPrimaryNameMixin
 
   one_to_many :name_software
   one_to_many :agent_contacts
