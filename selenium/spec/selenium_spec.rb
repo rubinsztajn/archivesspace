@@ -985,7 +985,11 @@ describe "ArchivesSpace user interface" do
 
     @driver.find_element(:link, 'View').click
     @driver.find_element(:link, 'Edit').click
+<<<<<<< HEAD
     @driver.find_element(:css => '#resource_extents_ .subrecord-form-heading .btn').click
+=======
+    @driver.find_element(:css => '#accession_extents_ .subrecord-form-heading .btn').click
+>>>>>>> Continuing the work on getting Selenium tests ported to the new form helper.
 
     @driver.clear_and_send_keys([:id, 'resource_extents__1__number_'], "5")
     event_type_select = @driver.find_element(:id => "resource_extents__1__extent_type_")
@@ -1002,7 +1006,11 @@ describe "ArchivesSpace user interface" do
 
 
   it "can see two Extents on the saved Resource" do
+<<<<<<< HEAD
     extent_headings = @driver.blocking_find_elements(:css => '#resource_extents_ .accordion-heading')
+=======
+    extent_headings = @driver.blocking_find_elements(:css => '#accession_extents_ .accordion-heading')
+>>>>>>> Continuing the work on getting Selenium tests ported to the new form helper.
 
     extent_headings.length.should eq (2)
     extent_headings[0].text.should eq ("10 Cassettes")
@@ -1013,13 +1021,22 @@ describe "ArchivesSpace user interface" do
   it "can remove an Extent when editing a Resource" do
     @driver.find_element(:link, 'Edit').click
 
+<<<<<<< HEAD
     @driver.blocking_find_elements(:css => '#resource_extents_ .subrecord-form-remove')[1].click
     @driver.find_element(:css => '#resource_extents_ .confirm-removal').click
+=======
+    @driver.blocking_find_elements(:css => '#accession_extents_ .subrecord-form-remove')[1].click
+    @driver.find_element(:css => '#accession_extents_ .confirm-removal').click
+>>>>>>> Continuing the work on getting Selenium tests ported to the new form helper.
     @driver.find_element(:css => "form#new_resource button[type='submit']").click
 
     @driver.find_element(:link, 'Finish Editing').click
 
+<<<<<<< HEAD
     extent_headings = @driver.blocking_find_elements(:css => '#resource_extents_ .accordion-heading')
+=======
+    extent_headings = @driver.blocking_find_elements(:css => '#accession_extents_ .accordion-heading')
+>>>>>>> Continuing the work on getting Selenium tests ported to the new form helper.
 
     extent_headings.length.should eq (1)
     extent_headings[0].text.should eq ("10 Cassettes")
