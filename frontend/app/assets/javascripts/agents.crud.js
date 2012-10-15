@@ -119,7 +119,7 @@ $(function() {
       $this.on("change", ":input:not([name~='sort_name'])", updateAutomaticSortName);
 
       var initSortNameType = function() {
-        $(".agent-name-fields").each(function() {
+        $(".subrecord-form-fields", $this).each(function() {
           // should automatic should be checked?
           var autoSortName = $.trim(AS.renderTemplate(sortNameTemplate(this), serializeNameFields(this)));
           var currentSortName = $(":input[name$=\"[sort_name]\"]", this).val();
