@@ -458,7 +458,6 @@ describe "ArchivesSpace user interface" do
 
   # Person Agents
 
-<<<<<<< HEAD
   it "reports errors and warnings when creating an invalid Person Agent" do
     @driver.find_element(:link, 'Create').click
     @driver.execute_script("$('.nav .dropdown-submenu a:contains(Agent)').focus()");
