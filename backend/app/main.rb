@@ -139,7 +139,7 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
   error Sequel::ValidationFailed do
-    json_response({:error => request.env['sinatra.error'].errors}, 409)
+    json_response({:error => request.env['sinatra.error'].errors}, 400)
   end
 
   error Sequel::DatabaseError do
