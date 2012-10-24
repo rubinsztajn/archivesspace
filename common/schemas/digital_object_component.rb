@@ -11,6 +11,7 @@
       "label" => {"type" => "string"},
       "title" => {"type" => "string"},
       "language" => {"type" => "string"},
+    },
 
     "additionalProperties" => false
   },

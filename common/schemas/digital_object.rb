@@ -27,6 +27,7 @@
       },
       "language" => {"type" => "string"},
       "restrictions" => {"type" => "boolean", "default" => false},
+    },
 
     "additionalProperties" => false
   },
