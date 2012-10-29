@@ -36,6 +36,11 @@ class Resource < Sequel::Model(:resource)
   end
 
 
+  def children
+    ArchivalObject.filter(:resource_id => self.id, :parent_id => nil)
+  end
+
+
   def tree
     links = {}
     properties = {}
