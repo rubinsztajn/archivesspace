@@ -37,4 +37,12 @@ describe 'Generic agent controller' do
     types.should eq(["agent_family", "agent_person"])
   end
 
+
+  it "can search for agents matching a prefix" do
+    agents = JSONModel::HTTP.get_json('/agents/by-name', :q => "Magus")
+
+    agents[0][names][0]['primary_name'].should eq('Magus Magoo')
+  end
+
+
 end
