@@ -75,4 +75,11 @@ describe 'Events controller' do
     JSONModel(:event).all.length.should eq(5)
   end
 
+
+  it "can get a list of records that are candidates for linking" do
+    result = JSONModel::HTTP.get_json(JSONModel(:event).uri_for('linkable-records/list'),
+                                      :q => "The accession")
+    result[0]["title"].should eq("The accession title")
+  end
+
 end
