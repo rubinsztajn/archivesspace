@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Resource model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_resource
     Resource.create_from_json(JSONModel(:resource).
                               from_hash({
@@ -94,12 +89,14 @@ describe 'Resource model' do
   it "blows up if you don't specify which repository you're querying" do
     resource = create_resource
 
+    RequestContext.put(:repo_id, nil)
+
     expect {
-      Resource.to_jsonmodel(resource[:id], :resource, nil)
+      Resource.to_jsonmodel(resource[:id], :resource)
     }.to raise_error
 
     expect {
-      Resource.to_jsonmodel(resource[:id], :resource, :none)
+      Resource.to_jsonmodel(resource[:id], :resource)
     }.to raise_error
   end
 

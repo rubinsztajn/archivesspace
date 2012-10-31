@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Archival Object controller' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_archival_object(opts = {})
 
     ao = JSONModel(:archival_object).from_hash("ref_id" => "1234",
@@ -30,7 +25,10 @@ describe 'Archival Object controller' do
                                             "description" => "A new repository that doesn't contain our archival object")
     repo.save
     @repo = repo.uri
+
     JSONModel::set_repository(JSONModel(:repository).id_for(@repo))
+    RequestContext.put(:repo_id, JSONModel(:repository).id_for(@repo))
+
     JSONModel(:archival_object).find(created).should eq nil
   end
 

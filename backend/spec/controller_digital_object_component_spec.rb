@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Digital Object Component controller' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_digital_object_component(opts = {})
 
     doc = JSONModel(:digital_object_component).from_hash("component_id" => "abc123",

@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Accession controller' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_accession
     JSONModel(:accession).from_hash("id_0" => "1234",
                                     "title" => "The accession title",

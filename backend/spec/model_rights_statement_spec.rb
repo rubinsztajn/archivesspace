@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe 'Rights Statement model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
   it "Supports creating a new rights statement" do
     rights_statement = RightsStatement.create_from_json(JSONModel(:rights_statement).
                                   from_hash({

@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe 'Location model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
   it "can be created" do
     location = Location.create_from_json(JSONModel(:location).
                                   from_hash({

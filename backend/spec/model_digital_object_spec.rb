@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Digital object model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_digital_object
     DigitalObject.create_from_json(JSONModel(:digital_object).
                                    from_hash({

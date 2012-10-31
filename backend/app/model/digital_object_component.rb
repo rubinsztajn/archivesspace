@@ -6,6 +6,8 @@ class DigitalObjectComponent < Sequel::Model(:digital_object_component)
   include Dates
   include ExternalDocuments
 
+  set_model_scope :repository
+
   def children
     self.class.filter(:parent_id => self.id)
   end

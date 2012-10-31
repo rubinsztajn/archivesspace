@@ -59,8 +59,6 @@ describe 'User controller' do
 
 
   it "Yields a list of the user's permissions" do
-    make_test_repo
-
     group = JSONModel(:group).from_hash("group_code" => "newgroup",
                                         "description" => "A test group")
     group.grants_permissions = ["manage_repository"]

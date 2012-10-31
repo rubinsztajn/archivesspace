@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Accession model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   it "Allows accessions to be created" do
     accession = Accession.create_from_json(JSONModel(:accession).
                                            from_hash({

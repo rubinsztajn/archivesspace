@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe 'Extent model' do
 
-
   it "Allows an extent to be created" do
 
     extent = Extent.create_from_json(JSONModel(:extent).

@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Group controller' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_group(gcode = "newgroup", opts = {})
     group = JSONModel(:group).from_hash("group_code" => gcode,
                                         "description" => "A test group")
@@ -75,8 +70,7 @@ describe 'Group controller' do
     group.grants_permissions = ["swashbuckle"]
     group.save
 
-    User[:username => "guybrush"].can?("swashbuckle",
-                                       :repo_id => @repo_id).should eq(true)
+    User[:username => "guybrush"].can?("swashbuckle").should eq(true)
   end
 
 

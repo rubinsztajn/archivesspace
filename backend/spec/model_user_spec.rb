@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'User model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   it "Can yield a list of all permissions" do
     user = make_test_user("mark")
 

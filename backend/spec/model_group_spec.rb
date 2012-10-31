@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Group model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def test_group(group_code = "newgroup", description = "A test group")
     JSONModel(:group).from_hash(:group_code => "newgroup",
                                 :description => "A test group")
@@ -69,8 +64,11 @@ describe 'Group model' do
 
     group.permission.map {|permission| permission[:permission_code]}.should eq(["manage_repository"])
 
-    User[:username => "simon"].can?("manage_repository", :repo_id => repo_one).should eq(true)
-    User[:username => "simon"].can?("manage_repository", :repo_id => repo_two).should eq(false)
+    RequestContext.put(:repo_id, repo_one)
+    User[:username => "simon"].can?("manage_repository").should eq(true)
+
+    RequestContext.put(:repo_id, repo_two)
+    User[:username => "simon"].can?("manage_repository").should eq(false)
   end
 
 end

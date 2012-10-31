@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'ArchivalObject model' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_archival_object
     ArchivalObject.create_from_json(JSONModel(:archival_object).
                                     from_hash({ "ref_id" => "abcd",

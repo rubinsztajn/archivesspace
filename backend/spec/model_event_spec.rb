@@ -9,11 +9,6 @@ describe 'Event model' do
                                             "end" => "2012-05-14").to_hash
   end
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   it "enforces at least one linked agent and one linked record via its schema" do
 
     expect {

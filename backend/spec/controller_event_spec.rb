@@ -10,8 +10,6 @@ describe 'Events controller' do
   end
 
   before(:each) do
-    make_test_repo
-
     @test_agent = JSONModel(:agent_person).
       from_hash("agent_type" => "agent_person",
                 "names" => [{

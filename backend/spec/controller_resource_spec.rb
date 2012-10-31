@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Resources controller' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   it "lets you create a resource and get it back" do
     resource = JSONModel(:resource).from_hash("title" => "a resource", "id_0" => "abc123", "extents" => [{"portion" => "whole", "number" => "5 or so", "extent_type" => "reels"}])
     id = resource.save

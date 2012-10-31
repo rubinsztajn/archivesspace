@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe 'Container Location' do
 
-  before(:each) do
-    make_test_repo
-  end
-
   def create_container
     Container.create_from_json(JSONModel(:container).
                                  from_hash({

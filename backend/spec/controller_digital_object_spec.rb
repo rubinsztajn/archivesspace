@@ -2,11 +2,6 @@ require 'spec_helper'
 
 describe 'Digital Objects controller' do
 
-  before(:each) do
-    make_test_repo
-  end
-
-
   def create_digital_object
     digital_object = JSONModel(:digital_object).from_hash("title" => "a digital object",
                                                           "digital_object_id" => "abc123",
