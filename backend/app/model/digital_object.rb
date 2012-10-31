@@ -40,6 +40,7 @@ def tree
   properties = {}
 
   root_node = nil
+
   DigitalObjectComponent.filter(:digital_object_id => self.id).each do |doc|
     if doc.parent_id
       links[doc.parent_id] ||= []
@@ -52,7 +53,7 @@ def tree
   end
 
   # Check for empty tree
-  return nil if root_node.nil?
+  return {} if root_node.nil?
 
   assemble_tree(root_node, links, properties)
 end
