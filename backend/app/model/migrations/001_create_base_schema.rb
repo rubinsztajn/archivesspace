@@ -157,7 +157,6 @@ Sequel.migration do
       String :title, :null => false
 
       String :identifier
-      String :ref_id
 
       Blob :notes, :null => true
 
