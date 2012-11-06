@@ -17,6 +17,8 @@ class AccessionsController < ApplicationController
 
   def edit
     @accession = Accession.find(params[:id], "resolve[]" => ["subjects", "ref"])
+    return render :partial => "accessions/edit_inline" if params[:inline]
+    fetch_tree
   end
 
 
@@ -39,6 +41,17 @@ class AccessionsController < ApplicationController
                 :on_valid => ->(id){
                   redirect_to :controller => :accessions, :action => :show, :id => id
                 })
+  end
+
+
+  private
+
+  def fetch_tree
+    @accession_tree = {
+      "id" => @accession.id,
+      "title" => @accession.title,
+      "children" => []
+    }
   end
 
 end
