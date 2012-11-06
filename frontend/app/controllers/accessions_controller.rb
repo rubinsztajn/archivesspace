@@ -50,6 +50,7 @@ class AccessionsController < ApplicationController
     @accession_tree = {
       "id" => @accession.id,
       "title" => @accession.title,
+      "jsonmodel_type" => "accession",
       "children" => []
     }
   end
