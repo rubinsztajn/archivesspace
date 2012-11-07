@@ -35,6 +35,18 @@ module ASModel
 
 
   def update_from_json(json, extra_values = {})
+
+    if self.values.has_key?(:suppressed)
+      if self[:suppressed] == 1
+        raise ReadOnlyException.new("Can't update an object that has been suppressed")
+      end
+
+      # No funny business.  If you want to set this you need to do it via the
+      # dedicated controller.
+      json["suppressed"] = false
+    end
+
+
     schema_defined_properties = json.class.schema["properties"].keys
 
     # Start by assuming all existing properties were nil, then overlay the
@@ -85,8 +97,6 @@ module ASModel
       @suppressible
     end
 
-    @@model_scope = {}
-
     def set_model_scope(value)
       if ![:repository, :global].include?(value)
         raise "Failure for #{self}: Model scope must be set as :repository or :global"
@@ -129,12 +139,12 @@ module ASModel
 
       end
 
-      @@model_scope[self] = value
+      @model_scope = value
     end
 
 
     def model_scope
-      @@model_scope[self] or
+      @model_scope or
         raise "set_model_scope definition missing for model #{self}"
     end
 
@@ -381,6 +391,11 @@ module ASModel
             end
 
       obj or raise NotFoundException.new("#{self} not found")
+    end
+
+
+    def uri_for(jsonmodel, id, opts = {})
+      JSONModel(jsonmodel).uri_for(id, opts.merge(:repo_id => self.active_repository))
     end
 
 

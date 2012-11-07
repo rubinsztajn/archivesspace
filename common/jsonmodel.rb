@@ -378,6 +378,14 @@ module JSONModel
       end
 
 
+      def add_error(attribute, message)
+        # reset validation
+        @validated = nil
+
+        super
+      end
+
+
       # Zap this?  A bit arbitrary
       def _warnings
         exceptions = self._exceptions
@@ -633,6 +641,10 @@ module JSONModel
             # Matched on this parameter.  Remove it from the passed in hash
             matched << k
           end
+        end
+
+        if uri.include?(":")
+          raise "Template substitution was incomplete: '#{uri}'"
         end
 
         remaining_opts = opts.clone

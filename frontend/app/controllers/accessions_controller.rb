@@ -1,7 +1,8 @@
 class AccessionsController < ApplicationController
-  skip_before_filter :unauthorised_access, :only => [:index, :show, :new, :edit, :create, :update]
+  skip_before_filter :unauthorised_access, :only => [:index, :show, :new, :edit, :create, :update, :suppress, :unsuppress]
   before_filter :user_needs_to_be_a_viewer, :only => [:index, :show]
   before_filter :user_needs_to_be_an_archivist, :only => [:new, :edit, :create, :update]
+  before_filter :user_needs_to_be_a_manager, :only => [:suppress, :unsuppress]
 
   def index
     @accessions = Accession.all
@@ -9,6 +10,7 @@ class AccessionsController < ApplicationController
 
   def show
     @accession = Accession.find(params[:id], "resolve[]" => ["subjects", "ref"])
+    flash[:info] = "Accession is suppressed and cannot be edited." if @accession.suppressed
   end
 
   def new
@@ -17,8 +19,13 @@ class AccessionsController < ApplicationController
 
   def edit
     @accession = Accession.find(params[:id], "resolve[]" => ["subjects", "ref"])
-  end
 
+    if @accession.suppressed
+      redirect_to(:controller => :accessions, :action => :show, :id => params[:id])
+    end
+
+    return render :partial => "accessions/edit_inline" if params[:inline]
+  end
 
   def create
     handle_crud(:instance => :accession,
@@ -40,5 +47,21 @@ class AccessionsController < ApplicationController
                   redirect_to :controller => :accessions, :action => :show, :id => id
                 })
   end
+
+  def suppress
+    Accession.find(params[:id]).suppressed = true
+
+    flash[:success] = "Accession Suppressed"
+    redirect_to(:controller => :accessions, :action => :show, :id => params[:id])
+  end
+
+
+  def unsuppress
+    Accession.find(params[:id]).suppressed = false
+
+    flash[:success] = "Accession Unsuppressed"
+    redirect_to(:controller => :accessions, :action => :show, :id => params[:id])
+  end
+
 
 end

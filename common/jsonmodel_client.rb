@@ -93,7 +93,12 @@ module JSONModel
 
     # Perform a HTTP POST request against the backend with form parameters
     def self.post_form(uri, params = {})
-      Net::HTTP.post_form(URI("#{backend_url}#{uri}"), params)
+      url = URI("#{backend_url}#{uri}")
+
+      req = Net::HTTP::Post.new(url.request_uri)
+      req.form_data = params
+
+      do_http_request(url, req)
     end
 
 
@@ -202,11 +207,11 @@ module JSONModel
 
     # Mark the suppression status of this record
     def suppressed=(val)
-      url = self.class.my_url("#{self.id}/suppressed")
+      response = JSONModel::HTTP.post_form("#{self.uri}/suppressed", :suppressed => val)
 
-      response = JSONModel::HTTP.post_json(url, JSON(:suppressed => val))
-
-      if response.code != '200'
+      if response.code == '403'
+        raise AccessDeniedException.new("Permission denied when setting suppression status")
+      elsif response.code != '200'
         raise "Error when setting suppression status for #{self}: #{response.code} -- #{response.body}"
       end
 

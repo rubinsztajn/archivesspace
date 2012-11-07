@@ -495,6 +495,9 @@ en:
       <<: *rights_statement_attributes
     _instances:
       <<: *instance_attributes
+    _html:
+      singular: Resource
+      plural: Resources
   repository:
     repo_code: Repository code
     description: Description
@@ -512,4 +515,3 @@ en:
     name: Your full name
     password: Password
     confirm_password: Confirm your password
-    passwords: Passwords

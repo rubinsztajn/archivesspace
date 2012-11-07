@@ -64,6 +64,7 @@ class ArchivesSpaceService < Sinatra::Base
       require_relative "model/instances"
       require_relative "model/deaccessions"
       require_relative "model/agents"
+      require_relative "model/trees"
 
       Dir.glob(File.join(File.dirname(__FILE__), "model", "*.rb")).sort.each do |model|
         basename = File.basename(model, ".rb")
@@ -199,7 +200,7 @@ class ArchivesSpaceService < Sinatra::Base
       response = {:status => type, :id => obj[:id], :lock_version => obj[:lock_version]}
 
       if jsonmodel
-        response[:uri] = jsonmodel.class.uri_for(obj[:id], :repo_id => params[:repo_id])
+        response[:uri] = jsonmodel.class.uri_for(obj[:id], params)
         response[:warnings] = jsonmodel._warnings
       end
 
