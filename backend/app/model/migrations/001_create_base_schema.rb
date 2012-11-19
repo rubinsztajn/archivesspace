@@ -180,8 +180,6 @@ Sequel.migration do
       Integer :repo_id, :null => false
       Integer :resource_id, :null => true
 
-      Integer :parent_id, :null => true
-
       String :ref_id, :null => false, :unique => false
       String :component_id, :null => true
 
@@ -195,8 +193,19 @@ Sequel.migration do
     alter_table(:archival_object) do
       add_foreign_key([:repo_id], :repository, :key => :id)
       add_foreign_key([:resource_id], :resource, :key => :id)
-      add_foreign_key([:parent_id], :archival_object, :key => :id)
       add_index([:resource_id, :ref_id], :unique => true)
+    end
+
+
+    create_table(:archival_object_hierarchy) do
+      Integer :archival_object_id, :null => false
+      Integer :parent_id, :null => false
+      Integer :position, :null => false
+    end
+
+    alter_table(:archival_object_hierarchy) do
+      add_foreign_key([:archival_object_id], :archival_object, :key => :id)
+      add_index([:parent_id, :position], :unique => true)
     end
 
 
