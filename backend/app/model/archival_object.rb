@@ -28,20 +28,45 @@ class ArchivalObject < Sequel::Model(:archival_object)
 
     parent_id = json.parent ? JSONModel::parse_reference(json.parent, opts)[:id] : -1
 
+    orig_position = self.db[:archival_object_hierarchy].
+      filter(:parent_id => parent_id, :archival_object_id => obj.id).get(:position)
+
     self.db[:archival_object_hierarchy].
          filter(:parent_id => parent_id,
-                :archival_object_id => obj.id).delete
-
+                :archival_object_id => obj.id).delete if orig_position
 
     # If the request includes a specific position, make sure it's free
     if json.position && self.db[:archival_object_hierarchy].
            filter(:parent_id => parent_id,
                   :position => json.position).count > 0
 
-      self.db[:archival_object_hierarchy].
-           filter(:parent_id => parent_id).
-           filter{|row| row.position >= json.position}.
-           update(:position => :position + 1)
+
+      if orig_position
+        # if obj exists will need to shift things about
+        if json.position > orig_position
+          self.db[:archival_object_hierarchy].
+            filter(:parent_id => parent_id).
+            filter{|row| row.position >= orig_position}.
+            filter{|row| row.position <= json.position}.
+            order(:position).
+            update(:position => :position - 1)
+        else #json.position < orig_position
+          self.db[:archival_object_hierarchy].
+            filter(:parent_id => parent_id).
+            filter{|row| row.position <= orig_position}.
+            filter{|row| row.position >= json.position}.
+            order(Sequel.desc(:position)).
+            update(:position => :position + 1)
+        end
+
+      else
+        # object is new -- just poke it in there!
+        self.db[:archival_object_hierarchy].
+          filter(:parent_id => parent_id).
+          filter{|row| row.position >= json.position}.
+          order(Sequel.desc(:position)).
+          update(:position => :position + 1)
+      end
     end
 
 
@@ -50,8 +75,6 @@ class ArchivalObject < Sequel::Model(:archival_object)
                     count
 
     while true
-      position += 1
-
       begin
         self.db[:archival_object_hierarchy].
              insert(:archival_object_id => obj.id,
@@ -62,6 +85,7 @@ class ArchivalObject < Sequel::Model(:archival_object)
       rescue Sequel::DatabaseError => e
         if DB.is_integrity_violation(e)
           Log.info("Integrity conflict when setting position of new record.  Retrying...")
+          position += 1
           sleep rand * 5
         else
           raise e
