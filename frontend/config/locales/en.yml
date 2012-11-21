@@ -20,6 +20,9 @@ en:
     digital_object_type_text: Text
     language: Language
     restrictions: Restrictions?
+    _html:
+      singular: Digital Object
+      plural: Digital Objects
   digital_object_component:
     label: Label
     title: Title
