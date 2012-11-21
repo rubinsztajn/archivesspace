@@ -12,10 +12,10 @@
       "processing_total_extent_type" => {"type" => "string", "required" => false, "enum" => ["cassettes", "cubic_feet", "leafs", "linear_feet", "photographic_prints", "photographic_slides", "reels", "sheets", "volumes"]},
       "processing_hours_total" => {"type" => "string", "required" => false},
       "processing_plan" => {"type" => "string", "required" => false},
-      "processing_priority" => {"type" => "string", "required" => false, "enum" => ["High", "Medium", "Low"]},
-      "processing_status" => {"type" => "string", "required" => false, "enum" => ["New", "In Progress", "Completed"]},
+      "processing_priority" => {"type" => "string", "required" => false, "enum" => ["high", "medium", "low"]},
+      "processing_status" => {"type" => "string", "required" => false, "enum" => ["new", "in_progress", "completed"]},
       "processors" => {"type" => "string", "required" => false},
-      "rights_determined" => {"type" => "boolean"},
+      "rights_determined" => {"type" => "boolean", "default" => false},
       
       "linked_records" => {
         "type" => "array",
