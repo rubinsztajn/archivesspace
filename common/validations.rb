@@ -139,4 +139,28 @@ module JSONModel::Validations
     end
   end
 
+
+  def self.check_linked_records(hash)
+    errors = []
+
+    if hash["linked_records"].length > 1
+      if hash["linked_records"].any? { |lr|
+          ref = JSONModel.parse_reference(lr["ref"])
+          ref.nil? || ref[:type] != "digital_object"
+        }
+        errors << ["linked_records",
+                   "must link to one accession, one resource, or one or more digital objects"]
+      end
+    end
+
+    errors
+  end
+
+
+  if JSONModel(:collection_management)
+    JSONModel(:collection_management).add_validation("check_linked_records") do |hash|
+      check_linked_records(hash)
+    end
+  end
+
 end
