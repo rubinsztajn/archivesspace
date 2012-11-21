@@ -1,0 +1,32 @@
+<%= render :partial => "shared/breadcrumb", :locals => {:trail => [link_to("Browse Collection Management Records", :controller => :collection_management_records, :action => :index), @collection_management_record.id]} %>
+<div class="row-fluid">
+   <div class="span3">
+      <%= render :partial => "sidebar" %>
+   </div>
+   <div class="span9 record-pane">
+    <%= readonly_context :collection_management, @collection_management_record.to_hash(true) do |readonly| %>
+      <% if user_can?('update_repository') %>
+        <div class="btn-group" style="float: right">
+            <%= link_to "Edit", {:controller => :collection_management_records, :action => :edit, :id => @collection_management_record.id}, :class => "btn btn-small" %>
+          </div>
+        <% end %>
+        <h2><%= @collection_management_record.id %> <span class="label label-info">Collection Management Record</span></h2>
+
+       <%= render :partial => "shared/flash_messages" %>
+
+        <section id="basic_information">
+          <h3>Basic Information</h3>
+
+          <div class="row-fluid label-and-value">
+             <div class="span3">Identifier</div>
+             <div class="span9"><%= @collection_management_record.id %></div>
+          </div>
+          <div class="row-fluid label-and-value">
+
+             <div class="span3"><%= I18n.t("collection_management.cataloged_note") %></div>
+             <div class="span9"><%= @collection_management_record.cataloged_note %></div>
+          </div>
+        </section>
+     <% end %>
+   </div>
+</div>

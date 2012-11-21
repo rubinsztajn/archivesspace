@@ -20,7 +20,7 @@ class ArchivesSpaceService < Sinatra::Base
             ["repo_id", :repo_id])
     .returns([200, :updated]) \
   do
-    handle_update(CollectionManagement, :collection_management_id, :event)
+    handle_update(CollectionManagement, :collection_management_id, :collection_management)
   end
 
 
