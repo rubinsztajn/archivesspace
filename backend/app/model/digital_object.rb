@@ -42,4 +42,10 @@ class DigitalObject < Sequel::Model(:digital_object)
     json
   end
 
+
+  def self.records_matching(query, max)
+    self.this_repo.where(Sequel.like(Sequel.function(:lower, :title),
+                                     "#{query}%".downcase)).first(max)
+  end
+
 end
