@@ -76,6 +76,8 @@ ArchivesSpace::Application.routes.draw do
 
   match 'test/shutdown' => 'tests#shutdown', :via => [:get]
 
+  match 'search' => 'search#all', :via => [:get]
+
 
   # Sample resource route with options:
   #   resources :products do
