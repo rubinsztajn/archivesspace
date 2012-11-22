@@ -19,11 +19,11 @@
                 <li><%= link_to "Accessions", :controller => :accessions, :action => :index %></li>
                 <li><%= link_to "Resources", :controller => :resources, :action => :index %></li>
                 <li><%= link_to "Digital Objects", :controller => :digital_objects, :action => :index %></li>
-                <li><%= link_to "Collection Management Records", :controller => :collection_management_records, :action => :index %></li>
                 <li class="divider"></li>
                 <li><%= link_to "Subjects", :controller => :subjects, :action => :index %></li>
                 <li><%= link_to "Agents", :controller => :agents, :action => :index %></li>
                 <li><%= link_to "Locations", :controller => :locations, :action => :index %></li>
+                <li><%= link_to "Collection Management Records", :controller => :collection_management_records, :action => :index %></li>
               </ul>
             </li>
             <% if user_can?('update_repository') %>
@@ -33,7 +33,6 @@
                   <li><%= link_to "Accession", :controller => :accessions, :action => :new %></li>
                   <li><%= link_to "Resource", :controller => :resources, :action => :new %></li>
                   <li><%= link_to "Digital Object", :controller => :digital_objects, :action => :new %></li>
-                  <li><%= link_to "Collection Management Record", :controller => :collection_management_records, :action => :new %></li>
                   <li class="divider"></li>
                   <li><%= link_to "Subject", :controller => :subjects, :action => :new %></li>
                   <li class="dropdown-submenu">
@@ -47,6 +46,7 @@
                   </li>
                   <li><%= link_to "Location", :controller => :locations, :action => :new %></li>
                   <li><%= link_to "Event", :controller => :events, :action => :new %></li>
+                  <li><%= link_to "Collection Management Record", :controller => :collection_management_records, :action => :new %></li>
                 </ul>
               </li>
 							<li class="dropdown import-container">
