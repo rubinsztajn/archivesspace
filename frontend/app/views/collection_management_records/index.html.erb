@@ -10,7 +10,7 @@
         <% end %>
       </div>
       <h2>Collection Management Records</h2>
-      <% if @collection_management_records.length > 0 %>
+      <% if @collection_managements.length > 0 %>
          <table class="table table-striped table-bordered table-condensed">
            <thead>
              <tr>
@@ -22,7 +22,7 @@
              </tr>
            </thead>
            <tbody>
-              <% @collection_management_records.each do |cmr| %>
+              <% @collection_managements.each do |cmr| %>
               <tr>
                <td><%= cmr.id %></td>
                <td><%= I18n.t("collection_management.processing_priority_#{cmr.processing_priority}") %></td>

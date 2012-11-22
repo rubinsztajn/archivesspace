@@ -1,13 +1,13 @@
-<%= render :partial => "shared/breadcrumb", :locals => {:trail => [link_to("Browse Collection Management Records", :controller => :collection_management_records, :action => :index ), @collection_management_record.id]} %>
+<%= render :partial => "shared/breadcrumb", :locals => {:trail => [link_to("Browse Collection Management Records", :controller => :collection_management_records, :action => :index ), @collection_management.id]} %>
 
-<%= form_for @collection_management_record, :as => "collection_management", :url => {:action => :update}, :html => {:class => 'form-horizontal'} do |f| %>
-  <%= form_context :collection_management, @collection_management_record do |form| %>
+<%= form_for @collection_management, :as => "collection_management", :url => {:action => :update}, :html => {:class => 'form-horizontal'} do |f| %>
+  <%= form_context :collection_management, @collection_management do |form| %>
     <div class="row-fluid">
       <div class="span3">
         <%= render :partial => "sidebar" %>
       </div>
       <div class="span9 record-pane">
-        <h2><%= @collection_management_record.id %>  <span class="label label-info">Collection Management Record</span></h2>
+        <h2><%= @collection_management.id %>  <span class="label label-info">Collection Management Record</span></h2>
 
         <%= render :partial => "collection_management_records/form", :locals => {:form => form} %>
         <div class="form-actions">

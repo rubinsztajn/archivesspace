@@ -4,25 +4,24 @@ class CollectionManagementRecordsController < ApplicationController
   before_filter :user_needs_to_be_an_archivist, :only => [:new, :edit, :create, :update]
 
   def index
-    @collection_management_records = JSONModel(:collection_management).all
+    @collection_managements = JSONModel(:collection_management).all
   end
 
   def show
-    @collection_management_record = JSONModel(:collection_management).find(params[:id], "resolve[]" => ["ref"])
+    @collection_management = JSONModel(:collection_management).find(params[:id], "resolve[]" => ["ref"])
   end
 
   def new
-    @collection_management_record = JSONModel(:collection_management).new._always_valid!
-    @collection_management_record.linked_records = [{}]
+    @collection_management = JSONModel(:collection_management).new._always_valid!
+    @collection_management.linked_records = [{}]
   end
 
   def edit
-    @collection_management_record = JSONModel(:collection_management).find(params[:id], "resolve[]" => ["ref"])
+    @collection_management = JSONModel(:collection_management).find(params[:id], "resolve[]" => ["ref"])
   end
 
   def create
     handle_crud(:instance => :collection_management,
-                :model => JSONModel(:collection_management),
                 :on_invalid => ->(){
                   render :action => :new
                 },
@@ -33,7 +32,6 @@ class CollectionManagementRecordsController < ApplicationController
 
   def update
     handle_crud(:instance => :collection_management,
-                :model => JSONModel(:collection_management),
                 :obj => JSONModel(:collection_management).find(params[:id]),
                 :on_invalid => ->(){ render :action => :edit },
                 :on_valid => ->(id){
