@@ -957,6 +957,36 @@ Sequel.migration do
     end
 
 
+    create_table(:collection_management) do
+      primary_key :id
+
+      Integer :lock_version, :default => 0, :null => false
+
+      Integer :repo_id, :null => false
+
+      TextField :cataloged_note, :null => true
+      String :processing_hours_per_foot_estimate, :null => true
+      String :processing_total_extent, :null => true
+      String :processing_total_extent_type, :null => true
+      String :processing_hours_total, :null => true
+      TextField :processing_plan, :null => true
+      String :processing_priority, :null => true
+      String :processing_status, :null => true
+      TextField :processors, :null => true
+      Integer :rights_determined, :default => 0, :null => false
+
+      DateTime :create_time, :null => false
+      DateTime :last_modified, :null => false
+    end
+
+    create_join_table({:collection_management_id => :collection_management,
+                        :accession_id => :accession}, :name => "collection_management_accession")
+    create_join_table({:collection_management_id => :collection_management,
+                        :resource_id => :resource}, :name => "collection_management_resource")
+    create_join_table({:collection_management_id => :collection_management,
+                        :digital_object_id => :digital_object}, :name => "collection_management_digital_object")
+
+
     create_table(:sequence) do
       String :sequence_name, :primary_key => true
       Integer :value, :null => false
@@ -976,10 +1006,10 @@ Sequel.migration do
      :session, :auth_db, :group_user, :group_permission, :permission, :user, :group, :accession,
      :date, :event, :archival_object, :vocabulary, :extent, :resource, :repository,
      :accession_external_document, :archival_object_external_document,
-     :external_document_resource, :external_document_subject,
+     :external_document_resource, :external_document_subject, :digital_object,
      :agent_people_external_document, :agent_family_external_document,
      :agent_corporate_entity_external_document,
-     :agent_software_external_document].each do |table|
+     :agent_software_external_document, :collection_management].each do |table|
       puts "Dropping #{table}"
       drop_table?(table)
     end
