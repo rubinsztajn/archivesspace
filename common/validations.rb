@@ -140,7 +140,18 @@ module JSONModel::Validations
   end
 
 
-  def self.check_linked_records(hash)
+  def self.check_collection_management(hash)
+    errors = []
+
+    if !hash["processing_total_extent"].nil? and hash["processing_total_extent_type"].nil?
+      errors << ["processing_total_extent_type", "is required if total extent is specified"]
+    end
+
+    errors
+  end
+
+
+  def self.check_collection_management_linked_records(hash)
     errors = []
 
     if hash.has_key?("linked_records") && !hash["linked_records"].first.has_key?("ref")
@@ -161,8 +172,11 @@ module JSONModel::Validations
 
 
   if JSONModel(:collection_management)
-    JSONModel(:collection_management).add_validation("check_linked_records") do |hash|
-      check_linked_records(hash)
+    JSONModel(:collection_management).add_validation("check_collection_management") do |hash|
+      check_collection_management(hash)
+    end
+    JSONModel(:collection_management).add_validation("check_collection_management_linked_records") do |hash|
+      check_collection_management_linked_records(hash)
     end
   end
 
