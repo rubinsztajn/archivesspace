@@ -992,8 +992,6 @@ Sequel.migration do
       Integer :value, :null => false
     end
 
-=======
->>>>>>> First hack at backend for collection management
   end
 
   down do
