@@ -561,6 +561,7 @@ en:
     processing_status_completed: Completed
     processors: Processors
     rights_determined: Rights determined
+    linked_records: Linked records
     _html:
       singular: Collection Management Record
       plural: Collection Management Records

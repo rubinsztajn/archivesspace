@@ -17,6 +17,7 @@
                <th>Identifier</th>
                <th>Priority</th>
                <th>Status</th>
+               <th>Processors</th>
                <th>Processing</th>
                <th width="70px"><!-- actions --></th>
              </tr>
@@ -27,6 +28,7 @@
                <td><%= cmr.id %></td>
                <td><%= I18n.t("collection_management.processing_priority_#{cmr.processing_priority}") %></td>
                <td><%= I18n.t("collection_management.processing_status_#{cmr.processing_status}") %></td>
+               <td><%= cmr.processors %></td>
                <%=
                  pr = JSONModel.parse_reference(cmr.linked_records[0]['ref'])
                  many_lr = cmr.linked_records.length > 1 ? true : false

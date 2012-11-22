@@ -10,7 +10,14 @@
             <%= link_to "Edit", {:controller => :collection_management_records, :action => :edit, :id => @collection_management.id}, :class => "btn btn-small" %>
           </div>
         <% end %>
-        <h2><%= @collection_management.id %> <span class="label label-info">Collection Management Record</span></h2>
+
+        <%=
+          pr = JSONModel.parse_reference(@collection_management.linked_records[0]['ref'])
+          many_lr = @collection_management.linked_records.length > 1 ? true : false
+          rt = I18n.t("#{pr[:type]}._html.#{many_lr ? 'plural' : 'singular'}")
+          nil
+        %>
+        <h2>Processing <%= "#{rt}: #{JSONModel(pr[:type].intern).find(pr[:id]).title}#{many_lr ? ' ...' : ''}"  %> <span class="label label-info">Collection Management Record</span></h2>
 
        <%= render :partial => "shared/flash_messages" %>
 
@@ -69,7 +76,7 @@
           <div class="row-fluid label-and-value">
 
              <div class="span3"><%= I18n.t("collection_management.rights_determined") %></div>
-             <div class="span9"><%= @collection_management.rights_determined %></div>
+             <div class="span9"><%= @collection_management.rights_determined ? 'Yes' : 'No' %></div>
 
           </div>
         </section>
