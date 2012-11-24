@@ -211,7 +211,11 @@ class ArchivesSpaceService < Sinatra::Base
 
 
     def json_response(obj, status = 200)
-      [status, {"Content-Type" => "application/json"}, [obj.to_json + "\n"]]
+      if obj.is_a? Hash and obj['node_type'] == "resource"
+        [status, {"Content-Type" => "application/json"}, [obj.to_json(:max_nesting => 30) + "\n"]]
+      else
+        [status, {"Content-Type" => "application/json"}, [obj.to_json + "\n"]]
+      end
     end
 
 

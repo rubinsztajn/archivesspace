@@ -179,7 +179,7 @@ module JSONModel
       response = JSONModel::HTTP.post_json(self.class.my_url(self.id, opts), self.to_json)
 
       if response.code == '200'
-        response = JSON.parse(response.body)
+        response = JSON.parse(response.body, :max_nesting => 30)
 
         self.uri = self.class.uri_for(response["id"], opts)
 
