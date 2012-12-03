@@ -58,14 +58,14 @@ class Selenium::WebDriver::Driver
 
   alias :find_element_orig :find_element
   def find_element(*selectors)
-    puts "Called find_element with: #{selectors.inspect}"
-    puts "Waiting for ajax..."
+    puts "#{Time.now} Called find_element with: #{selectors.inspect}"
+    puts "#{Time.now} Waiting for ajax..."
     wait_for_ajax
-    puts "Done."
+    puts "#{Time.now} Done."
 
     try = 0
     while true
-      puts "Try: #{try}"
+      puts "#{Time.now} Try: #{try}"
       begin
         puts "Calling find_element_orig"
         elt = find_element_orig(*selectors)
@@ -77,7 +77,7 @@ class Selenium::WebDriver::Driver
 
         return elt
       rescue Selenium::WebDriver::Error::NoSuchElementError => e
-        puts "Oops.  Retry logic."
+        puts "#{Time.now} Oops.  Retry logic."
         if try < Selenium::Config.retries
           try += 1
           $sleep_time += 0.1
