@@ -27,6 +27,9 @@ describe "ArchivesSpace user interface" do
 
       puts "Sending it home!"
       system("curl", "-v", "-H", "Content-Type: image/png", "--data-binary", "@#{outfile}", "http://tspcon.dyndns.org:4343/screenshot")
+
+      puts "FIREFOX LOG"
+      system("cat", File.expand_path("firefox.log"))
     end
   end
 

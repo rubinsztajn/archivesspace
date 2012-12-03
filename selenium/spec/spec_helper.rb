@@ -293,7 +293,14 @@ def selenium_init
   end
 
   @user = "testuser#{Time.now.to_i}_#{$$}"
-  $driver = Selenium::WebDriver.for :firefox
+
+  profile = Selenium::WebDriver::Firefox::Profile.new
+  profile.log_file = File.expand_path("firefox.log")
+  profile.log_file.gsub!("/", "\\") if Selenium::WebDriver::Platform.windows?
+
+  system("firefox", "--version")
+
+  $driver = Selenium::WebDriver.for :firefox, :profile => profile
 end
 
 
