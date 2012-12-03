@@ -79,5 +79,4 @@ describe 'Resource model' do
     expect { create_resource(opts) }.to raise_error
   end
 
-
 end
