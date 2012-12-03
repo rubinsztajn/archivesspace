@@ -26,6 +26,19 @@ end
 
 module Selenium
   module WebDriver
+
+    module Remote
+      module Http
+        class Default < Common
+          def initialize
+            super
+            # Extend timeout to keep Travis happy
+            @timeout = 600
+          end
+        end
+      end
+    end
+
     module Firefox
       class Binary
 
