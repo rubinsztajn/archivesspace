@@ -58,12 +58,18 @@ class Selenium::WebDriver::Driver
 
   alias :find_element_orig :find_element
   def find_element(*selectors)
+    puts "Called find_element with: #{selectors.inspect}"
+    puts "Waiting for ajax..."
     wait_for_ajax
+    puts "Done."
 
     try = 0
     while true
+      puts "Try: #{try}"
       begin
+        puts "Calling find_element_orig"
         elt = find_element_orig(*selectors)
+        puts "Done"
 
         if not elt.displayed?
           raise Selenium::WebDriver::Error::NoSuchElementError.new("Not visible (yet?)")
@@ -71,6 +77,7 @@ class Selenium::WebDriver::Driver
 
         return elt
       rescue Selenium::WebDriver::Error::NoSuchElementError => e
+        puts "Oops.  Retry logic."
         if try < Selenium::Config.retries
           try += 1
           $sleep_time += 0.1
