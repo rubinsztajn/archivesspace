@@ -294,9 +294,16 @@ def selenium_init
 
   @user = "testuser#{Time.now.to_i}_#{$$}"
 
-  profile = Selenium::WebDriver::Firefox::Profile.new
-  profile.log_file = File.expand_path("firefox.log")
-  profile.log_file.gsub!("/", "\\") if Selenium::WebDriver::Platform.windows?
+  if ENV['TRAVIS']
+    puts "Loading stable version of Firefox"
+    system('wget', 'http://aspace.hudmol.com/firefox-16.0.tar.bz2')
+    system('tar', 'xvjf', 'firefox-16.0.tar.bz2')
+    ENV['PATH'] = (File.join(Dir.getwd, 'firefox') + ':' + ENV['PATH'])
+  end
+
+  # profile = Selenium::WebDriver::Firefox::Profile.new
+  # profile.log_file = File.expand_path("firefox.log")
+  # profile.log_file.gsub!("/", "\\") if Selenium::WebDriver::Platform.windows?
 
   system("firefox", "--version")
 
