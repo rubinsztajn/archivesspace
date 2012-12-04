@@ -307,7 +307,7 @@ def selenium_init
 
   system("firefox", "--version")
 
-  $driver = Selenium::WebDriver.for :firefox, :profile => profile
+  $driver = Selenium::WebDriver.for :firefox
 end
 
 
