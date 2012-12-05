@@ -24,6 +24,7 @@
     <%= form.label_and_textfield "ead_id" %>
     <%= form.label_and_textfield "ead_location" %>
     <%= render :partial => "subjects/linker", :locals => { :form => form }%>
+    <%= render :partial => "accessions/linker", :locals => { :form => form }%>
 
   </section>
 
