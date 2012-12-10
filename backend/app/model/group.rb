@@ -4,8 +4,8 @@ class Group < Sequel::Model(:group)
 
   set_model_scope :repository
 
-  many_to_many :user, :join_table => :group_user
-  many_to_many :permission, :join_table => :group_permission
+  ordered_many_to_many :user, :join_table => :group_user
+  ordered_many_to_many :permission, :join_table => :group_permission
 
 
   def self.GLOBAL

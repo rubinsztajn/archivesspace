@@ -4,7 +4,7 @@ require_relative 'external_document'
 module ExternalDocuments
 
   def self.included(base)
-    base.many_to_many(:external_document,
+    base.ordered_many_to_many(:external_document,
                       :before_add => proc { |obj, item_to_add|
                         if obj.external_document.any?{|doc| doc.location == item_to_add.location}
                           raise Sequel::ValidationFailed.new("Duplicate entry for location: #{item_to_add.location}")

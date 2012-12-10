@@ -39,8 +39,8 @@ module AgentManager
       def register_agent_type(opts)
         AgentManager.register_agent_type(self, opts)
 
-        self.one_to_many my_agent_type[:name_type]
-        self.one_to_many :agent_contact
+        self.ordered_one_to_many my_agent_type[:name_type]
+        self.ordered_one_to_many :agent_contact
 
         self.jsonmodel_hint(:the_property => :names,
                             :contains_records_of_type => my_agent_type[:name_type],

@@ -53,6 +53,9 @@ module ASModel
   def self.included(base)
     base.instance_eval do
       plugin :optimistic_locking
+
+      alias :unordered_many_to_many :many_to_many
+      alias :unordered_one_to_many :one_to_many
     end
 
     base.extend(ClassMethods)
@@ -478,5 +481,38 @@ module ASModel
 
       sequel_to_jsonmodel(obj, model, opts)
     end
+
+
+    # Custom many-to-many association that ensures order by "id"
+    def ordered_many_to_many(name, opts)
+      raise "Please define a :join_table" if not opts.has_key? :join_table
+
+      join_table_schema = self.db[opts[:join_table].intern]
+
+      if not opts.has_key?(:order) and join_table_schema.columns.include? :id
+        opts[:order] = "#{opts[:join_table]}__id".intern
+      end
+
+      unordered_many_to_many(name, opts)
+    end
+
+
+    # Custom one-to-many association that ensures order by "id"
+    def ordered_one_to_many(name, opts = {})
+      if not opts.has_key?(:order)
+        opts[:order] = :id
+      end
+
+      unordered_one_to_many(name, opts)
+    end
+
+    def many_to_many(*args)
+      raise "Please use either unordered_many_to_many or ordered_many_to_many"
+    end
+
+    def one_to_many(*args)
+      raise "Please use either unordered_one_to_many or ordered_one_to_many"
+    end
+
   end
 end

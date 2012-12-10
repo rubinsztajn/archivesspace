@@ -4,7 +4,7 @@ require_relative 'ASDate'
 module Dates
 
   def self.included(base)
-    base.one_to_many :date, :class => "ASDate"
+    base.ordered_one_to_many :date, :class => "ASDate"
 
     base.jsonmodel_hint(:the_property => :dates,
                         :contains_records_of_type => :date,

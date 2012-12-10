@@ -41,7 +41,7 @@ class CollectionManagement < Sequel::Model(:collection_management)
 
 
   @@record_links.keys.each do |link_type|
-    one_to_many "collection_management_#{link_type}_link".intern
+    ordered_one_to_many "collection_management_#{link_type}_link".intern
   end
 
 

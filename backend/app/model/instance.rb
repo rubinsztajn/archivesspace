@@ -4,7 +4,7 @@ class Instance < Sequel::Model(:instance)
   set_model_scope :global
   plugin :validation_helpers
 
-  one_to_many :container
+  ordered_one_to_many :container
 
   jsonmodel_hint(:the_property => :container,
                  :is_array => false,

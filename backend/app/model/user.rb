@@ -70,5 +70,5 @@ class User < Sequel::Model(:user)
   end
 
 
-  many_to_many :group, :join_table => "group_user"
+  ordered_many_to_many :group, :join_table => "group_user"
 end

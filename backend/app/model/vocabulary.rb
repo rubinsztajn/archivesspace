@@ -4,8 +4,8 @@ class Vocabulary < Sequel::Model(:vocabulary)
 
   set_model_scope :global
 
-  one_to_many :subject
-  one_to_many :term, :key => :vocab_id
+  ordered_one_to_many :subject
+  ordered_one_to_many :term, :key => :vocab_id
 
   jsonmodel_hint(:the_property => :terms,
                  :contains_records_of_type => :term,

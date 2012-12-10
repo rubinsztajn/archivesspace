@@ -4,7 +4,7 @@ require_relative 'instance'
 module Instances
 
   def self.included(base)
-    base.one_to_many :instance
+    base.ordered_one_to_many :instance
 
     base.jsonmodel_hint(:the_property => :instances,
                         :contains_records_of_type => :instance,

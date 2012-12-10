@@ -31,7 +31,7 @@ class Event < Sequel::Model(:event)
   enable_suppression
   set_model_scope :repository
 
-  one_to_many :date, :class => "ASDate"
+  ordered_one_to_many :date, :class => "ASDate"
   jsonmodel_hint(:the_property => :date,
                  :contains_records_of_type => :date,
                  :corresponding_to_association => :date,
@@ -46,7 +46,7 @@ class Event < Sequel::Model(:event)
 
 
   @@record_links.keys.each do |link_type|
-    one_to_many "event_#{link_type}_link".intern
+    ordered_one_to_many "event_#{link_type}_link".intern
   end
 
 

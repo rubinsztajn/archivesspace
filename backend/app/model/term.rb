@@ -2,7 +2,6 @@ class Term < Sequel::Model(:term)
   plugin :validation_helpers
   include ASModel
 
-  many_to_many :subject, :join_table => "subject_term"
   set_model_scope :global
 
 

@@ -26,7 +26,7 @@ module Agents
   def self.included(base)
     AgentManager.registered_agents.each do |agent_type|
       link_type = agent_type[:jsonmodel]
-      base.one_to_many "#{base.table_name}_#{link_type}_link".intern
+      base.ordered_one_to_many "#{base.table_name}_#{link_type}_link".intern
     end
 
     base.extend(ClassMethods)
