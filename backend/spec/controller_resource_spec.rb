@@ -390,4 +390,83 @@ describe 'Resources controller' do
     }.to raise_error(StandardError, /Invalid URI reference/)
   end
 
+
+  it "retains order of linked subjects" do
+
+    vocab = create(:json_vocab)
+    vocab_uri = JSONModel(:vocabulary).uri_for(vocab.id)
+    subject_a = create(:json_subject,
+                     :terms => [build(:json_term, :vocabulary => vocab_uri).to_hash],
+                     :vocabulary => vocab_uri
+    )
+    subject_b = create(:json_subject,
+                       :terms => [build(:json_term, :vocabulary => vocab_uri).to_hash],
+                       :vocabulary => vocab_uri
+    )
+
+    resource = create(:json_resource, :subjects => [subject_a.uri, subject_b.uri])
+
+    JSONModel(:resource).find(resource.id).subjects[0].should eq(subject_a.uri)
+    JSONModel(:resource).find(resource.id).subjects[1].should eq(subject_b.uri)
+
+    subject_c = create(:json_subject,
+                       :terms => [build(:json_term, :vocabulary => vocab_uri).to_hash],
+                       :vocabulary => vocab_uri
+    )
+
+    resource.subjects = [subject_c.uri, subject_b.uri, subject_a.uri]
+    resource.save
+
+    JSONModel(:resource).find(resource.id).subjects[0].should eq(subject_c.uri)
+    JSONModel(:resource).find(resource.id).subjects[1].should eq(subject_b.uri)
+    JSONModel(:resource).find(resource.id).subjects[2].should eq(subject_a.uri)
+  end
+
+
+  it "retains order of linked external documents" do
+
+    ext_doc_a = build(:json_external_document, {:title => "EXTDOC_A"})
+    ext_doc_b = build(:json_external_document, {:title => "EXTDOC_B"})
+
+    resource = create(:json_resource, :external_documents => [ext_doc_a.to_hash, ext_doc_b.to_hash])
+
+    JSONModel(:resource).find(resource.id).external_documents[0]['title'].should eq("EXTDOC_A")
+    JSONModel(:resource).find(resource.id).external_documents[1]['title'].should eq("EXTDOC_B")
+
+    resource.external_documents = [ext_doc_b.to_hash, ext_doc_a.to_hash]
+    resource.save
+
+    JSONModel(:resource).find(resource.id).external_documents[0]['title'].should eq("EXTDOC_B")
+    JSONModel(:resource).find(resource.id).external_documents[1]['title'].should eq("EXTDOC_A")
+  end
+
+
+  it "retains order of linked agents" do
+
+    agent_a = create(:json_agent_person)
+    agent_b = create(:json_agent_person)
+
+    resource = create(:json_resource, :linked_agents => [
+      {:ref => agent_a.uri, :role => 'creator'},
+      {:ref => agent_b.uri, :role => 'creator'},
+    ])
+
+    JSONModel(:resource).find(resource.id).linked_agents[0]['ref'].should eq(agent_a.uri)
+    JSONModel(:resource).find(resource.id).linked_agents[1]['ref'].should eq(agent_b.uri)
+
+    agent_c = create(:json_agent_person)
+
+    resource.linked_agents = [
+      {:ref => agent_c.uri, :role => 'creator'},
+      {:ref => agent_b.uri, :role => 'creator'},
+      {:ref => agent_a.uri, :role => 'creator'},
+    ]
+    resource.save
+
+    JSONModel(:resource).find(resource.id).linked_agents[0]['ref'].should eq(agent_c.uri)
+    JSONModel(:resource).find(resource.id).linked_agents[1]['ref'].should eq(agent_b.uri)
+    JSONModel(:resource).find(resource.id).linked_agents[2]['ref'].should eq(agent_a.uri)
+
+  end
+
 end
