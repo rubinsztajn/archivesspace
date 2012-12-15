@@ -44,11 +44,13 @@ class AccessionsController < ApplicationController
     handle_crud(:instance => :accession,
                 :model => Accession,
                 :obj => JSONModel(:accession).find(params[:id], "resolve[]" => ["subjects", "ref"]),
+                :replace => false,
                 :on_invalid => ->(){
                   return render :partial => "accessions/edit_inline" if params[:inline]
                   return render action: "edit"
                 },
                 :on_valid => ->(id){
+                  Rails.logger.debug("SAVED ACCESSION #{@accession.inspect}")
                   flash[:success] = "Accession Saved"
                   return render :partial => "accessions/edit_inline" if params[:inline]
                   redirect_to :controller => :accessions, :action => :show, :id => id
