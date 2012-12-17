@@ -19,10 +19,13 @@ describe "ArchivesSpace user interface" do
   end
 
   after(:each) do |group|
-    if group.example.exception and ENV['SCREENSHOT_ON_ERROR']
+    if group.example.exception
       outfile = "/tmp/#{Time.now.to_i}_#{$$}.png"
       puts "Saving screenshot to #{outfile}"
       $driver.save_screenshot(outfile)
+
+      puts "Sending it home!"
+      system("curl", "-v", "-H", "Content-Type: image/png", "--data-binary", "@#{outfile}", "http://tspcon.dyndns.org:4343/screenshot")
     end
   end
 
