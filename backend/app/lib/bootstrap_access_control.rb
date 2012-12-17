@@ -39,9 +39,13 @@ class ArchivesSpaceService
     Permission.define("create_user",
                       "The ability to create a new user account while logged in",
                       :level => "global")
-    
+
     Permission.define("create_repository",
                       "The ability to create new repositories",
+                      :level => "global")
+
+    Permission.define("index_system",
+                      "The ability to read any record for indexing",
                       :level => "global")
 
     Permission.define("manage_repository",
@@ -83,6 +87,7 @@ class ArchivesSpaceService
 
         created_group.grant("view_repository")
         created_group.grant("view_suppressed")
+        created_group.grant("index_system")
       end
     end
 
