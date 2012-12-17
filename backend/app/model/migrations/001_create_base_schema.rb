@@ -944,6 +944,7 @@ Sequel.migration do
           primary_key :id
           Integer "#{record}_id".intern
           Integer "#{agent}_id".intern
+          Integer :aspace_relationship_position
           String :role
         end
 
@@ -963,6 +964,7 @@ Sequel.migration do
         primary_key :id
         Integer "#{record}_id".intern
         Integer :event_id
+        Integer :aspace_relationship_position
         String :role
       end
 
@@ -983,6 +985,7 @@ Sequel.migration do
         primary_key :id
         Integer "#{record}_id".intern
         Integer :collection_management_id
+        Integer :aspace_relationship_position
       end
 
       alter_table(table) do
@@ -1000,6 +1003,7 @@ Sequel.migration do
       primary_key :id
       Integer :accession_id
       Integer :resource_id
+      Integer :aspace_relationship_position
     end
 
     alter_table(table) do
